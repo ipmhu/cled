@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLED | Iniciar Sesión</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0F2A44;
+            --primary-light: #1F4E79;
+            --success: #4CAF50;
+            --info: #26A69A;
+            --danger: #E53935;
+            --bg: #F5F7FA;
+            --surface: #FFFFFF;
+            --text-muted: #9CA3AF;
+            --border: #E5E7EB;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .login-logo {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            letter-spacing: 4px;
+        }
+
+        .login-subtitle {
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            background: #F9FAFB;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--info);
+            box-shadow: 0 0 0 4px rgba(38,166,154,0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--info), #3ac1b4);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 8px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(38,166,154,0.3);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-back {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .btn-back:hover { color: var(--primary); }
+
+        #login-error {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            min-height: 20px;
+        }
+
+        .demo-info {
+            background: #F0F9FF;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px;
+            font-size: 0.8rem;
+            color: #1F4E79;
+            border: 1px solid #BAE6FD;
+        }
+
+        .demo-info strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        code {
+            background: #E5E7EB;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <!-- NO HAY FORM - Solo divs para evitar refresh -->
+    <div class="login-container">
+        <div class="login-logo">CLED</div>
+        <p class="login-subtitle">Liderazgo · Expresión · Desarrollo</p>
+        
+        <div class="form-group">
+            <label>ID de Miembro</label>
+            <input class="form-control" type="text" id="login-user" placeholder="Ej: ADM001" autocomplete="off" onkeypress="if(event.key==='Enter'){event.preventDefault();iniciarSesion();}">
+        </div>
+        
+        <div class="form-group">
+            <label>Contraseña</label>
+            <input class="form-control" type="password" id="login-pass" placeholder="••••••••" autocomplete="off" onkeypress="if(event.key==='Enter'){event.preventDefault();iniciarSesion();}">
+        </div>
+        
+        <div id="login-error"></div>
+        
+        <button type="button" class="btn-login" id="login-btn" onclick="iniciarSesion()">
+            INICIAR SESIÓN
+        </button>
+        
+        <a href="index.html" class="btn-back" onclick="event.preventDefault(); window.location.href='index.html';">← Volver al sitio público</a>
+        
+        <div class="demo-info">
+            <strong>🔑 Datos de prueba:</strong>
+            <div style="text-align:left; margin-top:8px;">
+                <div>Admin: <code>ADM001</code> / <code>admin123</code></div>
+                <div>Facilitador: <code>FAC001</code> / <code>fac123</code></div>
+                <div>Participante: <code>EST001</code> / <code>est123</code></div>
+                <div>Protocolo: <code>PRO001</code> / <code>pro123</code></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════
+        // DATOS LOCALES DE USUARIOS
+        // ═══════════════════════════════════════
+        var USUARIOS_LOCALES = {
+            'ADM001': {
+                id: '1',
+                codigo: 'ADM001',
+                nombre: 'Robelin Mejías',
+                email: 'robelin@cled.edu.do',
+                pass: 'admin123',
+                rol: 'Administrador',
+                club: 'TODOS',
+                clubId: null,
+                telefono: '809-555-0101',
+                grado: '6to',
+                modulo: 'Desarrollo de Aplicaciones Informáticas',
+                estado: 'Activo',
+                tutorialVisto: true,
+                terminosAceptados: true
+            },
+            'FAC001': {
+                id: '2',
+                codigo: 'FAC001',
+                nombre: 'Jennyfer López',
+                email: 'jennyfer@cled.edu.do',
+                pass: 'fac123',
+                rol: 'Facilitador',
+                club: 'Debate',
+                clubId: 'debate-id',
+                telefono: '809-555-0102',
+                grado: '6to',
+                modulo: 'Gestión Administrativa',
+                estado: 'Activo',
+                tutorialVisto: true,
+                terminosAceptados: true
+            },
+            'EST001': {
+                id: '3',
+                codigo: 'EST001',
+                nombre: 'Carlos Martínez',
+                email: 'carlos@estudiante.edu.do',
+                pass: 'est123',
+                rol: 'Participante',
+                club: 'Debate',
+                clubId: 'debate-id',
+                telefono: '809-555-0103',
+                grado: '5to',
+                modulo: 'Electrónica',
+                estado: 'Activo',
+                tutorialVisto: false,
+                terminosAceptados: false
+            },
+            'PRO001': {
+                id: '4',
+                codigo: 'PRO001',
+                nombre: 'Ana Ramírez',
+                email: 'ana@protocolo.edu.do',
+                pass: 'pro123',
+                rol: 'PROTOCOLO',
+                club: 'TODOS',
+                clubId: null,
+                telefono: '809-555-0104',
+                grado: '6to',
+                modulo: 'Logística',
+                estado: 'Activo',
+                tutorialVisto: true,
+                terminosAceptados: true
+            }
+        };
+
+        // ═══════════════════════════════════════
+        // VERIFICAR SESIÓN EXISTENTE
+        // ═══════════════════════════════════════
+        (function() {
+            var sesion = localStorage.getItem('CLED_SESSION');
+            if (sesion) {
+                try {
+                    var usuario = JSON.parse(sesion);
+                    if (usuario.rol === 'PROTOCOLO') {
+                        window.location.replace('protocolo.html');
+                    } else if (usuario.rol === 'Administrador' || usuario.rol === 'Facilitador' || usuario.rol === 'Participante') {
+                        window.location.replace('panel.html');
+                    }
+                } catch(e) {
+                    localStorage.removeItem('CLED_SESSION');
+                }
+            }
+        })();
+
+        // ═══════════════════════════════════════
+        // INICIAR SESIÓN
+        // ═══════════════════════════════════════
+        function iniciarSesion() {
+            var userId = document.getElementById('login-user').value.trim();
+            var password = document.getElementById('login-pass').value.trim();
+            var errorDiv = document.getElementById('login-error');
+            var loginBtn = document.getElementById('login-btn');
+
+            errorDiv.textContent = '';
+
+            if (!userId || !password) {
+                errorDiv.textContent = '❌ Completa todos los campos';
+                return false;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Verificando...';
+
+            // Verificar en datos locales
+            var usuarioLocal = USUARIOS_LOCALES[userId];
+            
+            if (usuarioLocal && usuarioLocal.pass === password) {
+                // Crear sesión sin la contraseña
+                var sesion = {
+                    id: usuarioLocal.id,
+                    codigo: usuarioLocal.codigo,
+                    nombre: usuarioLocal.nombre,
+                    email: usuarioLocal.email,
+                    rol: usuarioLocal.rol,
+                    club: usuarioLocal.club,
+                    clubId: usuarioLocal.clubId,
+                    telefono: usuarioLocal.telefono,
+                    grado: usuarioLocal.grado,
+                    modulo: usuarioLocal.modulo,
+                    estado: usuarioLocal.estado,
+                    tutorialVisto: usuarioLocal.tutorialVisto,
+                    terminosAceptados: usuarioLocal.terminosAceptados
+                };
+                
+                localStorage.setItem('CLED_SESSION', JSON.stringify(sesion));
+                
+                // Redirigir después de un pequeño delay
+                setTimeout(function() {
+                    redirigirSegunRol(sesion.rol);
+                }, 200);
+                
+                return false;
+            }
+
+            // Si no está en datos locales, mostrar error
+            errorDiv.textContent = '❌ Credenciales incorrectas';
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'INICIAR SESIÓN';
+            
+            return false;
+        }
+
+        function redirigirSegunRol(rol) {
+            if (rol === 'PROTOCOLO') {
+                window.location.replace('protocolo.html');
+            } else {
+                window.location.replace('panel.html');
+            }
+        }
+        
+        // Prevenir que cualquier formulario en la página cause refresh
+        document.addEventListener('submit', function(e) {
+            e.preventDefault();
+            return false;
+        });
+    </script>
+</body>
+</html>

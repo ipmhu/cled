@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLED | Panel de Protocolo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0F2A44;
+            --primary-light: #1F4E79;
+            --success: #4CAF50;
+            --warning: #F57C00;
+            --info: #26A69A;
+            --danger: #E53935;
+            --bg: #F5F7FA;
+            --surface: #FFFFFF;
+            --text-main: #111827;
+            --text-muted: #9CA3AF;
+            --border: #E5E7EB;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.08);
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0F2A44 0%, #1F4E79 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .protocolo-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .protocolo-header {
+            background: white;
+            border-radius: 20px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .protocolo-header h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+        }
+
+        .user-badge .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--info);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            animation: slideIn 0.3s ease;
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            background: #F9FAFB;
+            transition: border-color 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--info);
+            background: white;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+        }
+        .btn-primary:hover { background: var(--primary-light); }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            width: 100%;
+        }
+        .btn-success:hover { filter: brightness(1.1); }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .resultado-card {
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 16px;
+            border: 2px solid var(--success);
+        }
+
+        .resultado-card.success {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-color: var(--success);
+        }
+
+        .resultado-card.error {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border-color: var(--danger);
+        }
+
+        .resultado-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .icono-status {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .icono-success { background: var(--success); }
+        .icono-error { background: var(--danger); }
+
+        .datos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .dato-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .dato-item strong {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-box .numero {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-box .etiqueta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .lista-checkins {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .checkin-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--primary);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 9999;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
+        #toast.success { background: var(--success); }
+        #toast.error { background: var(--danger); }
+
+        .badge-presente {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="protocolo-container">
+        <!-- Header -->
+        <header class="protocolo-header">
+            <h1>🔐 Panel de Protocolo</h1>
+            <div class="user-badge">
+                <div class="avatar" id="proto-avatar">?</div>
+                <div>
+                    <strong id="proto-nombre" style="font-size:0.9rem;"></strong>
+                    <div style="font-size:0.7rem; color:var(--text-muted);">Protocolo</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Verificación -->
+        <div class="card">
+            <h2>✅ Verificación de Asistencia</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">
+                Ingresa el código único proporcionado al asistente para confirmar su presencia en el evento.
+            </p>
+            
+            <div class="form-group">
+                <label>Código de Confirmación</label>
+                <input id="codigo-input" class="form-control" 
+                       placeholder="CLED-XXXXXXXX-XXXXX" 
+                       onkeyup="if(event.key==='Enter') verificarCodigo()"
+                       autocomplete="off">
+            </div>
+            
+            <button class="btn btn-primary" onclick="verificarCodigo()">
+                <span class="material-icons">search</span>
+                Verificar Código
+            </button>
+            
+            <div id="resultado-verificacion"></div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="card">
+            <h2>📊 Estadísticas del Evento</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="numero" id="stat-confirmados" style="color: var(--info);">0</div>
+                    <div class="etiqueta">Confirmados</div>
+                </div>
+                <div class="stat-box">
+                    <div class="numero" id="stat-presentes" style="color: var(--success);">0</div>
+                    <div class="etiqueta">Presentes</div>
+                </div>
+                <div class="stat-box">
+                    <div class="numero" id="stat-ausentes" style="color: var(--danger);">0</div>
+                    <div class="etiqueta">Ausentes</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:16px; width:auto;" onclick="actualizarEstadisticas()">
+                🔄 Actualizar Estadísticas
+            </button>
+        </div>
+
+        <!-- Últimos Check-ins -->
+        <div class="card">
+            <h2>📋 Últimos Check-ins</h2>
+            <div class="lista-checkins" id="lista-checkins">
+                <p style="color: var(--text-muted);">No hay check-ins registrados aún.</p>
+            </div>
+        </div>
+
+        <button class="btn btn-danger" onclick="cerrarSesion()" style="width:100%; margin-top:8px;">
+            <span class="material-icons">logout</span>
+            Cerrar Sesión
+        </button>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast"></div>
+
+    <!-- Cargar API -->
+    <script src="api.js"></script>
+    
+    <script>
+        // ═══════════════════════════════════════
+        // VARIABLES GLOBALES
+        // ═══════════════════════════════════════
+        let USUARIO_PROTOCOLO = null;
+
+        // ═══════════════════════════════════════
+        // INICIALIZACIÓN
+        // ═══════════════════════════════════════
+        document.addEventListener('DOMContentLoaded', async () => {
+            const sesion = localStorage.getItem('CLED_SESSION');
+            
+            if (!sesion) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            USUARIO_PROTOCOLO = JSON.parse(sesion);
+            
+            if (USUARIO_PROTOCOLO.rol !== 'PROTOCOLO') {
+                if (['Administrador', 'Facilitador', 'Participante'].includes(USUARIO_PROTOCOLO.rol)) {
+                    window.location.href = 'panel.html';
+                } else {
+                    window.location.href = 'login.html';
+                }
+                return;
+            }
+
+            // Actualizar UI
+            document.getElementById('proto-avatar').textContent = USUARIO_PROTOCOLO.nombre.charAt(0).toUpperCase();
+            document.getElementById('proto-nombre').textContent = USUARIO_PROTOCOLO.nombre;
+            
+            // Cargar estadísticas
+            await actualizarEstadisticas();
+        });
+
+        // ═══════════════════════════════════════
+        // VERIFICACIÓN DE CÓDIGOS (CON API)
+        // ═══════════════════════════════════════
+        async function verificarCodigo() {
+            const codigo = document.getElementById('codigo-input').value.trim().toUpperCase();
+            const resultadoDiv = document.getElementById('resultado-verificacion');
+
+            if (!codigo) {
+                toast('❌ Ingresa un código válido', 'error');
+                return;
+            }
+
+            // Llamar a la API para verificar
+            const result = await API.verificarCodigoEvento(codigo, USUARIO_PROTOCOLO.id);
+            
+            if (result.success) {
+                const confirmacion = result.data;
+                
+                resultadoDiv.innerHTML = `
+                    <div class="resultado-card success">
+                        <div class="resultado-header">
+                            <div class="icono-status icono-success">✓</div>
+                            <h3 style="color: var(--success);">Asistencia Confirmada</h3>
+                        </div>
+                        <div class="datos-grid">
+                            <div class="dato-item">
+                                <strong>Nombre</strong>
+                                <span>${confirmacion.nombre_completo}</span>
+                            </div>
+                            <div class="dato-item">
+                                <strong>Email</strong>
+                                <span>${confirmacion.email}</span>
+                            </div>
+                            <div class="dato-item">
+                                <strong>Teléfono</strong>
+                                <span>${confirmacion.telefono || '—'}</span>
+                            </div>
+                            <div class="dato-item">
+                                <strong>Curso</strong>
+                                <span>${confirmacion.curso || '—'}</span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.9rem;">
+                            <strong>Evento:</strong> ${confirmacion.eventos?.titulo || 'Evento'}<br>
+                            <strong>Fecha evento:</strong> ${confirmacion.eventos?.fecha ? new Date(confirmacion.eventos.fecha).toLocaleDateString() : '—'}<br>
+                            <strong>Hora de check-in:</strong> ${new Date().toLocaleTimeString()}
+                        </p>
+                    </div>
+                `;
+                
+                toast('✅ Asistencia confirmada exitosamente', 'success');
+                document.getElementById('codigo-input').value = '';
+                
+                // Actualizar estadísticas
+                await actualizarEstadisticas();
+            } else {
+                resultadoDiv.innerHTML = `
+                    <div class="resultado-card error">
+                        <div class="resultado-header">
+                            <div class="icono-status icono-error">✗</div>
+                            <h3 style="color: var(--danger);">${result.msg || 'Código no válido'}</h3>
+                        </div>
+                        <p>El código <strong>${codigo}</strong> no pudo ser verificado.</p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">
+                            ${result.msg === 'Código ya utilizado' ? 'Este código ya fue registrado anteriormente.' : 'Verifica que el código sea correcto.'}
+                        </p>
+                    </div>
+                `;
+                toast('❌ ' + (result.msg || 'Código no válido'), 'error');
+            }
+        }
+
+        // ═══════════════════════════════════════
+        // ESTADÍSTICAS (CON API)
+        // ═══════════════════════════════════════
+        async function actualizarEstadisticas() {
+            const result = await API.getEstadisticasEvento();
+            
+            if (result.success && result.data) {
+                const stats = result.data;
+                document.getElementById('stat-confirmados').textContent = stats.confirmados;
+                document.getElementById('stat-presentes').textContent = stats.presentes;
+                document.getElementById('stat-ausentes').textContent = stats.ausentes;
+            }
+        }
+
+        // ═══════════════════════════════════════
+        // UTILIDADES
+        // ═══════════════════════════════════════
+        function toast(msg, type = '') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'show ' + type;
+            setTimeout(() => t.className = '', 3200);
+        }
+
+        async function cerrarSesion() {
+            if (confirm('¿Seguro que deseas cerrar sesión?')) {
+                localStorage.removeItem('CLED_SESSION');
+                localStorage.removeItem('CLED_TOKEN');
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLED | Club de Liderazgo, Expresión y Desarrollo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0F2A44;
+            --primary-light: #1F4E79;
+            --success: #4CAF50;
+            --warning: #F57C00;
+            --info: #26A69A;
+            --accent: #7E57C2;
+            --danger: #E53935;
+            --bg: #F5F7FA;
+            --surface: #FFFFFF;
+            --text-main: #111827;
+            --text-muted: #9CA3AF;
+            --border: #E5E7EB;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.08);
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at top left, rgba(39,78,121,0.12), transparent 30%),
+                            radial-gradient(circle at top right, rgba(38,166,154,0.08), transparent 22%),
+                            linear-gradient(180deg, #f8fbff 0%, #f5f7fa 100%);
+        }
+
+        .public-nav {
+            position: sticky; top: 0; z-index: 50;
+            backdrop-filter: blur(16px);
+            background: rgba(15, 42, 68, 0.96);
+            color: white;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .public-nav-inner {
+            max-width: 1280px; margin: 0 auto; padding: 16px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 20px; flex-wrap: wrap;
+        }
+        .brand-mark {
+            display: flex; align-items: center; gap: 14px;
+            color: white; text-decoration: none;
+        }
+        .brand-title strong {
+            display: block; font-size: 1.05rem; letter-spacing: 0.12em;
+        }
+        .brand-title span {
+            display: block; font-size: 0.72rem;
+            color: rgba(255,255,255,0.72); margin-top: 2px;
+        }
+        .public-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+        .public-links a, .public-links button {
+            border: 0; background: transparent;
+            color: rgba(255,255,255,0.92); text-decoration: none;
+            font-family: 'Poppins', sans-serif; font-size: 0.85rem;
+            padding: 8px 10px; border-radius: 999px;
+            cursor: pointer; transition: .2s ease;
+        }
+        .public-links a:hover, .public-links button:hover { background: rgba(255,255,255,0.11); }
+        .public-login-btn {
+            background: linear-gradient(135deg, #26A69A, #3ac1b4) !important;
+            color: white !important; font-weight: 700 !important;
+            padding: 10px 18px !important;
+            box-shadow: 0 10px 26px rgba(38,166,154,.25);
+        }
+
+        .public-shell { max-width: 1280px; margin: 0 auto; padding: 26px 24px 90px; }
+        .section-title { font-size: 1.55rem; color: var(--primary); margin: 0 0 10px; letter-spacing: -0.02em; }
+        .section-subtitle { color: #5b6472; margin: 0 0 18px; line-height: 1.7; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+        .public-card {
+            background: white; border: 1px solid rgba(17,24,39,.08);
+            border-radius: 22px; box-shadow: 0 10px 30px rgba(15,42,68,.07);
+            padding: 22px; transition: transform .2s ease, box-shadow .2s ease; overflow: hidden;
+        }
+        .public-card:hover { transform: translateY(-4px); box-shadow: 0 16px 38px rgba(15,42,68,.12); }
+
+        .timeline { display: grid; gap: 14px; }
+        .timeline-item {
+            display: grid; grid-template-columns: 130px 1fr; gap: 16px;
+            background: white; border: 1px solid rgba(17,24,39,.08);
+            border-radius: 18px; padding: 18px 20px;
+            box-shadow: 0 10px 24px rgba(15,42,68,.05);
+        }
+        .timeline-date {
+            font-weight: 700; color: var(--info);
+            background: rgba(38,166,154,.09); border-radius: 14px;
+            padding: 10px 12px; text-align: center; height: fit-content;
+        }
+        .timeline-item h4 { margin: 0 0 8px; color: var(--primary); }
+        .timeline-item p { margin: 0; line-height: 1.75; color: #5b6472; white-space: pre-line; }
+
+        /* Director Cards */
+        .director-card { overflow: hidden; padding: 0; cursor: pointer; }
+        .director-photo {
+            width: 100%; aspect-ratio: 1 / 1; object-fit: cover;
+            display: block; background: #eaf0f7;
+        }
+        .director-body { padding: 18px; }
+        .director-role {
+            display: inline-flex; margin-bottom: 8px; font-size: .75rem;
+            font-weight: 700; letter-spacing: .08em; color: var(--info); text-transform: uppercase;
+        }
+
+        /* Modal Wikipedia */
+        .modal-wiki {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+            z-index: 1000; display: none; align-items: center; justify-content: center;
+        }
+        .wiki-content {
+            background: #f8f9fa; border-radius: 4px;
+            max-width: 900px; width: 95%; max-height: 90vh;
+            overflow-y: auto; box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+        .wiki-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px 28px;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 12px;
+        }
+        .wiki-header h2 {
+            margin: 0; font-size: 1.3rem; color: white;
+        }
+        .wiki-nav {
+            background: rgba(255,255,255,0.15);
+            color: white; border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 18px; border-radius: 4px; cursor: pointer;
+            font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .wiki-nav:hover { background: rgba(255,255,255,0.25); }
+        
+        /* Layout Wikipedia */
+        .wiki-layout {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 0;
+            min-height: 400px;
+        }
+        
+        /* Sidebar izquierdo (info personal) */
+        .wiki-sidebar {
+            background: white;
+            padding: 24px 18px;
+            border-right: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        .wiki-foto-perfil {
+            width: 120px;
+            height: 120px;
+            border-radius: 4px;
+            object-fit: cover;
+            margin-bottom: 16px;
+            border: 3px solid var(--primary);
+        }
+        .wiki-nombre-cargo {
+            margin-bottom: 16px;
+        }
+        .wiki-nombre-cargo h3 {
+            color: var(--primary);
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+        .wiki-nombre-cargo .wiki-cargo {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .wiki-dato-rapido {
+            text-align: left;
+            margin-bottom: 12px;
+            font-size: 0.82rem;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .wiki-dato-rapido strong {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        
+        /* Contenido principal */
+        .wiki-main {
+            background: white;
+            padding: 28px;
+        }
+        .wiki-main h3 {
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin: 20px 0 10px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .wiki-main h3:first-child {
+            margin-top: 0;
+        }
+        .wiki-main p {
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        .wiki-main ul {
+            margin-left: 20px;
+            margin-bottom: 12px;
+        }
+        .wiki-main li {
+            margin-bottom: 6px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Forms */
+        .public-form {
+            max-width: 920px; background: white; border-radius: 26px;
+            padding: 24px; border: 1px solid rgba(17,24,39,.08);
+            box-shadow: 0 20px 55px rgba(15,42,68,.08);
+        }
+        .public-form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .public-form-grid .full { grid-column: 1 / -1; }
+        .field label {
+            display: block; font-size: .85rem; font-weight: 700;
+            color: var(--primary); margin: 0 0 8px;
+        }
+        .field input, .field select, .field textarea {
+            width: 100%; border: 1px solid #d7deea; border-radius: 14px;
+            padding: 12px 14px; font-family: 'Poppins', sans-serif;
+            font-size: .95rem; background: #fbfcfe;
+            transition: border-color .18s ease, box-shadow .18s ease;
+        }
+        .field textarea { min-height: 120px; resize: vertical; }
+        .field input:focus, .field select:focus, .field textarea:focus {
+            outline: none; border-color: var(--info);
+            box-shadow: 0 0 0 4px rgba(38,166,154,.12); background: white;
+        }
+        
+        /* Checkboxes CENTRADOS */
+        .check-line {
+            display: flex; gap: 10px; align-items: center;
+            justify-content: center;
+            padding: 14px; background: #f8fbff;
+            border-radius: 16px; border: 1px solid #e5edf6;
+            text-align: center;
+        }
+        .check-line input[type="checkbox"] {
+            width: 18px; height: 18px; flex-shrink: 0;
+        }
+        .check-line div {
+            font-size: 0.9rem;
+        }
+        .check-line a { color: #205cd6; font-weight: 700; text-decoration: none; }
+        .check-line a:hover { text-decoration: underline; }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px; border-radius: 8px; border: none;
+            cursor: pointer; font-family: 'Poppins', sans-serif;
+            font-weight: 600; font-size: 0.85rem; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-light); }
+        .btn-info { background: var(--info); color: white; }
+        .btn-info:hover { filter: brightness(1.1); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { filter: brightness(1.1); }
+        .btn-ghost { background: transparent; color: var(--primary); border: 1px solid var(--border); }
+        .btn-ghost:hover { background: var(--bg); }
+        .btn-sm { padding: 6px 14px; font-size: 0.78rem; }
+        .btn-wide { width: 100%; justify-content: center; padding: 14px 18px; font-size: 1rem; }
+
+        /* Stats */
+        .stats-strip {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px; margin: 18px 0 0;
+        }
+        .stat-tile {
+            background: white; border-radius: 18px; padding: 18px;
+            border: 1px solid rgba(17,24,39,.08);
+            box-shadow: 0 10px 24px rgba(15,42,68,.05);
+        }
+        .stat-tile strong { display: block; font-size: 1.6rem; color: var(--primary); }
+        .stat-tile span { color: #667085; font-size: .9rem; }
+
+        /* Eventos */
+        .evento-card {
+            background: white; border-radius: 18px; padding: 20px;
+            margin-bottom: 16px; border: 1px solid rgba(17,24,39,.08);
+            display: grid; grid-template-columns: auto 1fr auto;
+            gap: 20px; align-items: center;
+        }
+        .evento-fecha {
+            text-align: center; padding: 12px; background: var(--bg);
+            border-radius: 12px; min-width: 100px;
+        }
+        .evento-fecha strong { display: block; font-size: 1.2rem; color: var(--primary); }
+
+        /* Modal Confirmación */
+        .modal-confirmacion {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            z-index: 1000; display: none; align-items: center; justify-content: center;
+        }
+        .confirmacion-content {
+            background: white; border-radius: 16px;
+            max-width: 550px; width: 95%; padding: 28px; text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+        .codigo-display {
+            background: #0F2A44; color: #4CAF50; font-size: 2.5rem;
+            font-weight: 700; padding: 20px; border-radius: 12px;
+            letter-spacing: 8px; margin: 16px 0; font-family: monospace;
+        }
+        .screenshot-aviso {
+            background: #FFF8E1; border: 2px dashed #F57C00;
+            padding: 12px; border-radius: 8px; margin: 12px 0;
+            color: #E65100; font-weight: 600; font-size: 0.9rem;
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed; bottom: 24px; right: 24px;
+            background: var(--primary); color: white;
+            padding: 14px 20px; border-radius: 10px;
+            font-size: 0.88rem; font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateY(80px); opacity: 0;
+            transition: all 0.3s; z-index: 9999;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
+        #toast.success { background: var(--success); }
+        #toast.error { background: var(--danger); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) {
+            .wiki-layout { grid-template-columns: 1fr; }
+            .wiki-sidebar { border-right: none; border-bottom: 1px solid #e0e0e0; }
+            .wiki-foto-perfil { width: 80px; height: 80px; }
+        }
+
+        @media (max-width: 980px) {
+            .timeline-item { grid-template-columns: 1fr; }
+            .public-form-grid { grid-template-columns: 1fr; }
+            .evento-card { grid-template-columns: 1fr; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <header class="public-nav">
+        <div class="public-nav-inner">
+            <a href="#" class="brand-mark" onclick="navegar('inicio'); return false;">
+                <div class="brand-title">
+                    <strong>CLED</strong>
+                    <span>Club de Liderazgo, Expresión y Desarrollo</span>
+                </div>
+            </a>
+            <div class="public-links">
+                <a href="#" onclick="navegar('inicio'); return false;">Inicio</a>
+                <a href="#" onclick="navegar('historia'); return false;">Nuestra Historia</a>
+                <a href="#" onclick="navegar('directiva'); return false;">Directiva</a>
+                <a href="#" onclick="navegar('clubes-eventos'); return false;">Clubes y Eventos</a>
+                <a href="#" onclick="navegar('inscripciones'); return false;">Inscripciones</a>
+                <a href="#" onclick="navegar('contacto'); return false;">Contacto</a>
+                <button class="public-login-btn" onclick="window.location.href='login.html'">LOGIN</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="public-shell" id="public-content">
+        <div style="text-align:center; padding:48px; color:var(--text-muted);">
+            <div style="width:36px;height:36px;border:3px solid #E5E7EB;border-top-color:#26A69A;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto 12px;"></div>
+            <span>Cargando...</span>
+        </div>
+    </main>
+
+    <!-- Modal Wikipedia -->
+    <div id="modal-director" class="modal-wiki">
+        <div class="wiki-content">
+            <div class="wiki-header">
+                <button class="wiki-nav" onclick="navegarDirector(-1)">← Anterior</button>
+                <h2 id="wiki-titulo-header">Directiva CLED</h2>
+                <button class="wiki-nav" onclick="navegarDirector(1)">Siguiente →</button>
+            </div>
+            <div class="wiki-layout">
+                <!-- Sidebar izquierdo con foto pequeña -->
+                <div class="wiki-sidebar">
+                    <img class="wiki-foto-perfil" id="wiki-foto" src="" alt="Foto director" onerror="this.src='https://ui-avatars.com/api/?name=CLED&background=0F2A44&color=fff&size=200'">
+                    <div class="wiki-nombre-cargo">
+                        <h3 id="wiki-nombre-corto"></h3>
+                        <div class="wiki-cargo" id="wiki-cargo-corto"></div>
+                    </div>
+                    <div class="wiki-dato-rapido">
+                        <strong>Formación</strong>
+                        <span id="wiki-formacion-corto"></span>
+                    </div>
+                    <div class="wiki-dato-rapido">
+                        <strong>Contacto</strong>
+                        <span id="wiki-email-corto"></span>
+                    </div>
+                </div>
+                <!-- Contenido principal -->
+                <div class="wiki-main">
+                    <h3>Biografía</h3>
+                    <p id="wiki-historia"></p>
+                    <h3>Logros Destacados</h3>
+                    <ul id="wiki-logros"></ul>
+                </div>
+            </div>
+            <div style="text-align:center; padding:16px; background:white; border-top:1px solid #e0e0e0;">
+                <button class="btn btn-ghost" onclick="cerrarModal('modal-director')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirmación Evento -->
+    <div id="modal-evento" class="modal-wiki">
+        <div class="wiki-content" style="max-width:500px; border-radius:16px;">
+            <h2 style="text-align:center; padding:20px;">Confirmar Asistencia</h2>
+            <div style="padding:0 28px 28px;">
+                <div class="field" style="margin-bottom:12px;">
+                    <label>Nombre Completo</label>
+                    <input id="conf-nombre" required>
+                </div>
+                <div class="field" style="margin-bottom:12px;">
+                    <label>Email</label>
+                    <input id="conf-email" type="email" required>
+                </div>
+                <div class="field" style="margin-bottom:12px;">
+                    <label>Teléfono</label>
+                    <input id="conf-telefono" required>
+                </div>
+                <div class="field" style="margin-bottom:12px;">
+                    <label>Curso/Grado</label>
+                    <input id="conf-curso" required>
+                </div>
+                <button class="btn btn-success btn-wide" onclick="confirmarAsistenciaEvento()">✓ Confirmar Asistencia</button>
+                <button class="btn btn-ghost btn-wide" onclick="cerrarModal('modal-evento')" style="margin-top:8px;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Código Generado -->
+    <div id="modal-codigo" class="modal-confirmacion">
+        <div class="confirmacion-content">
+            <h2 style="color:var(--success);">✅ ¡Confirmación Exitosa!</h2>
+            <p style="color:var(--text-muted); margin:8px 0;">Tu código de asistencia es:</p>
+            <div class="codigo-display" id="codigo-generado">------</div>
+            <div class="screenshot-aviso">
+                📸 ¡TOMA CAPTURA DE PANTALLA!<br>
+                <small>Necesitarás este código para el check-in del evento</small>
+            </div>
+            <div id="datos-confirmacion" style="text-align:left; margin:12px 0; font-size:0.9rem;"></div>
+            <button class="btn btn-primary btn-wide" onclick="cerrarModal('modal-codigo')">Entendido</button>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        // ═══════════════════════════════════════
+        // DATOS DE DIRECTIVA (FIJOS)
+        // ═══════════════════════════════════════
+        var DIRECTIVA_DATA = [
+            {
+                id: 1,
+                nombre: 'Robelin Mejías',
+                cargo: 'Director General',
+                foto: 'CLEDWEB/Robelin.png',
+                historia: 'Robelin Mejías es un visionario del desarrollo estudiantil que transformó el CLED en una plataforma integral de liderazgo. Con más de 3 años de experiencia en gestión de proyectos educativos, ha liderado la digitalización completa de los procesos institucionales y la expansión del club a nivel distrital. Su enfoque innovador combina tecnología, comunicación y liderazgo para crear experiencias transformadoras en toda la comunidad educativa. Bajo su dirección, el CLED ha obtenido reconocimiento oficial del Distrito Educativo 15-01.',
+                logros: [
+                    'Fundador del Club de Comunicación Social y Periodismo (2025)',
+                    'Digitalización completa de procesos institucionales',
+                    'Reconocimiento del Distrito Educativo 15-01 (2025)',
+                    'Liderazgo en la expansión a 5 clubes activos',
+                    'Implementación del sistema de gestión integral CLED'
+                ],
+                formacion: 'Desarrollo y Administración de Aplicaciones Informáticas',
+                email: 'robelin@cled.edu.do'
+            },
+            {
+                id: 2,
+                nombre: 'Jennyfer López',
+                cargo: 'Directora General',
+                foto: 'CLEDWEB/Jennyfer.png',
+                historia: 'Jennyfer López lidera la excelencia académica del CLED con una sólida formación en gestión educativa. Ha diseñado el currículo de liderazgo que hoy impacta a más de 200 estudiantes, implementando sistemas de evaluación continua y metodologías innovadoras de enseñanza. Su pasión por la educación se refleja en cada programa y actividad del club, asegurando estándares de calidad en todos los procesos formativos.',
+                logros: [
+                    'Diseño del currículo de liderazgo integral',
+                    'Implementación del sistema de evaluación continua',
+                    'Desarrollo de programas de mentoría estudiantil',
+                    'Coordinación de +30 talleres formativos'
+                ],
+                formacion: 'Gestión Administrativa y Tributaria',
+                email: 'jennyfer@cled.edu.do'
+            },
+            {
+                id: 3,
+                nombre: 'Shiley Aracena',
+                cargo: 'Directora General',
+                foto: 'CLEDWEB/Shiley.png',
+                historia: 'Shiley Aracena coordina la logística y operaciones del CLED con precisión y eficiencia. Su experiencia en gestión de proyectos y logística ha permitido que cada evento, taller y actividad del club se ejecute de manera impecable. Ha coordinado más de 50 eventos exitosos, estableciendo estándares de calidad operativa que garantizan el buen funcionamiento de todas las iniciativas del club.',
+                logros: [
+                    'Optimización de procesos operativos institucionales',
+                    'Coordinación de +50 eventos exitosos',
+                    'Implementación de sistemas de gestión de recursos',
+                    'Estandarización de protocolos de eventos'
+                ],
+                formacion: 'Logística y Transporte',
+                email: 'shiley@cled.edu.do'
+            }
+        ];
+
+        var directorActual = 0;
+
+        // ═══════════════════════════════════════
+        // INICIALIZACIÓN
+        // ═══════════════════════════════════════
+        (function() {
+            navegar('inicio');
+        })();
+
+        // ═══════════════════════════════════════
+        // NAVEGACIÓN
+        // ═══════════════════════════════════════
+        function navegar(seccion) {
+            var content = document.getElementById('public-content');
+            
+            switch(seccion) {
+                case 'inicio':
+                    content.innerHTML = renderInicio();
+                    actualizarContadorEventos();
+                    break;
+                case 'historia':
+                    content.innerHTML = renderHistoria();
+                    break;
+                case 'directiva':
+                    content.innerHTML = renderDirectiva();
+                    break;
+                case 'clubes-eventos':
+                    content.innerHTML = '<div style="text-align:center;padding:48px;">Cargando clubes y eventos...</div>';
+                    cargarClubesEventos();
+                    break;
+                case 'inscripciones':
+                    content.innerHTML = renderInscripciones();
+                    break;
+                case 'contacto':
+                    content.innerHTML = renderContacto();
+                    break;
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ═══════════════════════════════════════
+        // RENDERIZADO
+        // ═══════════════════════════════════════
+        function renderInicio() {
+            return `
+                <section style="background: linear-gradient(135deg, #0F2A44 0%, #1F4E79 55%, #123652 100%); color: white; border-radius: 28px; padding: 44px; margin-bottom: 24px;">
+                    <h1 style="font-size: clamp(2.25rem, 5vw, 3.5rem); margin-bottom: 12px;">CLED</h1>
+                    <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 20px;">Un espacio educativo para fortalecer liderazgo, expresión y desarrollo integral en toda nuestra comunidad.</p>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button class="btn btn-info" onclick="navegar('inscripciones')">Inscribirme</button>
+                        <button class="btn btn-ghost" style="color:white; border-color: rgba(255,255,255,0.3);" onclick="navegar('historia')">Conocer la historia</button>
+                    </div>
+                    <div class="stats-strip" style="margin-top: 24px;">
+                        <div class="stat-tile"><strong>128+</strong><span>Miembros totales</span></div>
+                        <div class="stat-tile"><strong>5</strong><span>Clubes activos</span></div>
+                        <div class="stat-tile"><strong>+87</strong><span>Miembros activos</span></div>
+                        <div class="stat-tile"><strong id="stat-eventos-real">—</strong><span>Eventos próximos</span></div>
+                    </div>
+                </section>
+                
+                <div class="card-grid">
+                    <div class="public-card">
+                        <h3 style="color: var(--primary);">🎯 Nuestra Misión</h3>
+                        <p>Formar líderes estudiantiles comprometidos con su desarrollo personal y el de su comunidad a través de programas innovadores.</p>
+                    </div>
+                    <div class="public-card">
+                        <h3 style="color: var(--primary);">👥 Comunidad</h3>
+                        <p>Más de 128 estudiantes participando en 5 clubes especializados que cubren diversas áreas de interés.</p>
+                    </div>
+                    <div class="public-card">
+                        <h3 style="color: var(--primary);">📅 Eventos</h3>
+                        <p>Talleres, competencias y actividades formativas durante todo el año para potenciar las habilidades de nuestros miembros.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderHistoria() {
+            return `
+                <div class="public-card" style="padding:40px;">
+                    <h2 class="section-title">Trayectoria e Hitos Institucionales</h2>
+                    <p class="section-subtitle">Desde su concepción, el CLED ha evolucionado de ser una iniciativa estudiantil a convertirse en un pilar fundamental para la formación integral.</p>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">Octubre 2024</div>
+                            <div>
+                                <h4>Génesis y Visión Fundacional</h4>
+                                <p>El 24 de octubre de 2024, bajo la visión estratégica de Elizabeth Perez Orthella, se establece formalmente el CLED.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Agosto 2025</div>
+                            <div>
+                                <h4>Evolución y Expansión Mediática</h4>
+                                <p>El 25 de agosto de 2025, se integra el Club de Comunicación Social y Periodismo, liderado por Robelin Mejías.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Septiembre 2025</div>
+                            <div>
+                                <h4>Reconocimiento y Consolidación Distrital</h4>
+                                <p>El 16 de septiembre de 2025, la propuesta educativa recibe el respaldo formal del Distrito Educativo 15-01.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Mayo 2026</div>
+                            <div>
+                                <h4>Renovación Estratégica y Liderazgo Actual</h4>
+                                <p>La directiva actual impulsa la digitalización y expansión de programas de voluntariado.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDirectiva() {
+            return `
+                <div class="public-card" style="padding:28px;">
+                    <h2 class="section-title">Nuestra Directiva</h2>
+                    <p class="section-subtitle">Conoce al equipo que lidera el cambio en nuestra comunidad educativa</p>
+                    <div class="card-grid">
+                        ${DIRECTIVA_DATA.map(function(d) {
+                            return `
+                                <article class="public-card director-card" onclick="abrirPerfilDirector(${d.id})" style="cursor:pointer;">
+                                    <img class="director-photo" src="${d.foto}" alt="${d.nombre}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(d.nombre)}&background=0F2A44&color=fff&size=400'">
+                                    <div class="director-body">
+                                        <span class="director-role">${d.cargo}</span>
+                                        <h3>${d.nombre}</h3>
+                                        <p style="color:#5f6a79; font-size:0.9rem;">${d.historia.substring(0, 100)}...</p>
+                                    </div>
+                                </article>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function cargarClubesEventos() {
+            var content = document.getElementById('public-content');
+            var eventosReales = [];
+            
+            if (typeof API !== 'undefined' && API.getEventos) {
+                API.getEventos().then(function(result) {
+                    if (result.success && result.data) {
+                        eventosReales = result.data;
+                    }
+                    content.innerHTML = renderClubesEventosHTML(eventosReales);
+                }).catch(function() {
+                    content.innerHTML = renderClubesEventosHTML([]);
+                });
+            } else {
+                content.innerHTML = renderClubesEventosHTML([]);
+            }
+        }
+
+        function renderClubesEventosHTML(eventos) {
+            var clubesHTML = [
+                { nombre: 'Debate', descripcion: 'Desarrolla habilidades de argumentación y oratoria', icono: '🎤', color: '#E53935' },
+                { nombre: 'Comunicación Social y Periodismo', descripcion: 'Periodismo, medios digitales y comunicación', icono: '📰', color: '#1F4E79' },
+                { nombre: 'Baile', descripcion: 'Expresión corporal, ritmo y cultura', icono: '💃', color: '#7E57C2' },
+                { nombre: 'Lectura', descripcion: 'Fomento de la lectura crítica y análisis', icono: '📚', color: '#4CAF50' },
+                { nombre: 'Artes', descripcion: 'Creatividad y expresión artística integral', icono: '🎨', color: '#F57C00' }
+            ];
+
+            return `
+                <div style="margin-bottom: 32px;">
+                    <h2 class="section-title">Clubes Disponibles</h2>
+                    <p class="section-subtitle">Descubre nuestros clubes y encuentra tu espacio ideal</p>
+                    <div class="card-grid">
+                        ${clubesHTML.map(function(c) {
+                            return '<div class="public-card" style="text-align:center; border-top: 4px solid ' + c.color + ';">' +
+                                '<div style="font-size:3.5rem; margin:12px 0;">' + c.icono + '</div>' +
+                                '<h3 style="color: var(--primary);">' + c.nombre + '</h3>' +
+                                '<p style="color:#5f6a79;">' + c.descripcion + '</p>' +
+                                '<button class="btn btn-primary btn-sm" onclick="navegar(\'inscripciones\')" style="margin-top:12px;">Inscribirse</button>' +
+                                '</div>';
+                        }).join('')}
+                    </div>
+                </div>
+                
+                <div>
+                    <h2 class="section-title">Próximos Eventos</h2>
+                    <p class="section-subtitle">Confirma tu asistencia y participa en nuestras actividades</p>
+                    ${eventos.length ? eventos.map(function(e) {
+                        return '<div class="evento-card">' +
+                            '<div class="evento-fecha">' +
+                                '<strong>' + new Date(e.fecha).getDate() + '</strong>' +
+                                '<span>' + new Date(e.fecha).toLocaleDateString('es-DO', {month:'short'}) + '</span>' +
+                            '</div>' +
+                            '<div>' +
+                                '<h4 style="color: var(--primary); margin-bottom:4px;">' + e.titulo + '</h4>' +
+                                '<p style="color:#5f6a79; margin:0;">' + (e.descripcion || '') + '</p>' +
+                                '<p style="color: var(--text-muted); font-size:0.85rem; margin-top:8px;">📍 ' + (e.lugar || 'Por confirmar') + ' | 🕐 ' + (e.hora || '--:--') + '</p>' +
+                            '</div>' +
+                            '<button class="btn btn-info" onclick="mostrarConfirmacion(\'' + e.id + '\')">✓ Confirmar</button>' +
+                        '</div>';
+                    }).join('') : '<p style="color: var(--text-muted);">No hay eventos programados próximamente.</p>'}
+                </div>
+            `;
+        }
+
+        function renderInscripciones() {
+            var clubesHTML = [
+                { id: 'debate', nombre: 'Debate' },
+                { id: 'comunicacion', nombre: 'Comunicación Social y Periodismo' },
+                { id: 'baile', nombre: 'Baile' },
+                { id: 'lectura', nombre: 'Lectura' },
+                { id: 'artes', nombre: 'Artes' }
+            ];
+
+            return `
+                <div class="public-card" style="padding:28px;">
+                    <h2 class="section-title">Formulario de Inscripción</h2>
+                    <p class="section-subtitle">Completa tus datos para unirte a nuestra comunidad</p>
+                    <div class="public-form" id="form-inscripcion">
+                        <div class="public-form-grid">
+                            <div class="field">
+                                <label>Nombre(s)</label>
+                                <input id="i_nombres" required>
+                            </div>
+                            <div class="field">
+                                <label>Apellido(s)</label>
+                                <input id="i_apellidos" required>
+                            </div>
+                            <div class="field">
+                                <label>Teléfono</label>
+                                <input id="i_telefono" required>
+                            </div>
+                            <div class="field">
+                                <label>Email</label>
+                                <input id="i_email" type="email" required>
+                            </div>
+                            <div class="field">
+                                <label>Grado</label>
+                                <select id="i_grado" onchange="toggleCampos()" required>
+                                    <option value="">Selecciona</option>
+                                    <option value="3ro">3ro</option>
+                                    <option value="4to">4to</option>
+                                    <option value="5to">5to</option>
+                                    <option value="6to">6to</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label>Sección</label>
+                                <input id="i_seccion" placeholder="Ej: A" required>
+                            </div>
+                            <div class="field full" id="modulo-wrap" style="display:none;">
+                                <label>Módulo</label>
+                                <select id="i_modulo">
+                                    <option value="">Selecciona</option>
+                                    <option>Logística y Transporte</option>
+                                    <option>Refrigeración</option>
+                                    <option>Electrónica</option>
+                                    <option>Electricidad</option>
+                                    <option>Desarrollo de Aplicaciones Informáticas</option>
+                                    <option>Gestión Administrativa y Tributaria</option>
+                                </select>
+                            </div>
+                            <div class="field full" id="pasantia-wrap" style="display:none;">
+                                <label>Día de Pasantía</label>
+                                <select id="i_pasantia">
+                                    <option value="">Selecciona</option>
+                                    <option>Lunes</option>
+                                    <option>Martes</option>
+                                    <option>Miércoles</option>
+                                    <option>Jueves</option>
+                                    <option>Viernes</option>
+                                </select>
+                            </div>
+                            <div class="field full">
+                                <label>Club deseado</label>
+                                <select id="i_club" required>
+                                    <option value="">Selecciona</option>
+                                    ${clubesHTML.map(function(c) { return '<option value="' + c.id + '">' + c.nombre + '</option>'; }).join('')}
+                                </select>
+                            </div>
+                            <div class="field full">
+                                <label>¿Por qué te interesa?</label>
+                                <textarea id="i_motivo" required></textarea>
+                            </div>
+                            <div class="field full">
+                                <label>Objetivos con el club</label>
+                                <textarea id="i_objetivos" required></textarea>
+                            </div>
+                            <div class="field full">
+                                <div class="check-line">
+                                    <input type="checkbox" id="i_terminos" required>
+                                    <div>Acepto los <a href="#" target="_blank">TÉRMINOS Y CONDICIONES</a></div>
+                                </div>
+                            </div>
+                            <div class="field full">
+                                <div class="check-line">
+                                    <input type="checkbox" id="i_normas" required>
+                                    <div>Acepto las <a href="#" target="_blank">NORMATIVAS Y REGLAS</a></div>
+                                </div>
+                            </div>
+                            <div class="field full">
+                                <button class="btn btn-success btn-wide" onclick="enviarInscripcion()">Enviar Inscripción</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderContacto() {
+            return `
+                <div class="public-card" style="padding:28px;">
+                    <h2 class="section-title">Contacto</h2>
+                    <p class="section-subtitle">Escríbenos directamente a <strong>cledpmhu@gmail.com</strong></p>
+                    <div class="public-form" id="form-contacto">
+                        <div class="public-form-grid">
+                            <div class="field">
+                                <label>Nombre completo</label>
+                                <input id="c_nombre" required>
+                            </div>
+                            <div class="field">
+                                <label>Email</label>
+                                <input id="c_email" type="email" required>
+                            </div>
+                            <div class="field">
+                                <label>Teléfono</label>
+                                <input id="c_telefono" type="tel" required>
+                            </div>
+                            <div class="field full">
+                                <label>Asunto</label>
+                                <input id="c_asunto" required>
+                            </div>
+                            <div class="field full">
+                                <label>Mensaje</label>
+                                <textarea id="c_mensaje" required></textarea>
+                            </div>
+                            <div class="field full">
+                                <button class="btn btn-primary btn-wide" onclick="enviarContacto()">Enviar mensaje</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ═══════════════════════════════════════
+        // FUNCIONALIDADES DIRECTIVA (WIKIPEDIA)
+        // ═══════════════════════════════════════
+        function abrirPerfilDirector(id) {
+            var director = null;
+            for (var i = 0; i < DIRECTIVA_DATA.length; i++) {
+                if (DIRECTIVA_DATA[i].id === id) {
+                    director = DIRECTIVA_DATA[i];
+                    directorActual = i;
+                    break;
+                }
+            }
+            
+            if (!director) return;
+            
+            // Actualizar header
+            document.getElementById('wiki-titulo-header').textContent = director.nombre + ' - ' + director.cargo;
+            
+            // Sidebar izquierdo
+            document.getElementById('wiki-foto').src = director.foto;
+            document.getElementById('wiki-foto').onerror = function() {
+                this.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(director.nombre) + '&background=0F2A44&color=fff&size=200';
+            };
+            document.getElementById('wiki-nombre-corto').textContent = director.nombre;
+            document.getElementById('wiki-cargo-corto').textContent = director.cargo;
+            document.getElementById('wiki-formacion-corto').textContent = director.formacion;
+            document.getElementById('wiki-email-corto').textContent = director.email;
+            
+            // Contenido principal
+            document.getElementById('wiki-historia').textContent = director.historia;
+            document.getElementById('wiki-logros').innerHTML = director.logros.map(function(l) {
+                return '<li>' + l + '</li>';
+            }).join('');
+            
+            document.getElementById('modal-director').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function navegarDirector(direccion) {
+            directorActual += direccion;
+            if (directorActual < 0) directorActual = DIRECTIVA_DATA.length - 1;
+            if (directorActual >= DIRECTIVA_DATA.length) directorActual = 0;
+            abrirPerfilDirector(DIRECTIVA_DATA[directorActual].id);
+        }
+
+        // ═══════════════════════════════════════
+        // CONFIRMACIÓN DE EVENTOS
+        // ═══════════════════════════════════════
+        function mostrarConfirmacion(eventoId) {
+            document.getElementById('modal-evento').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            // Guardar el ID del evento para usar en la confirmación
+            window._eventoActual = eventoId;
+        }
+
+        function confirmarAsistenciaEvento() {
+            var nombre = document.getElementById('conf-nombre').value.trim();
+            var email = document.getElementById('conf-email').value.trim();
+            var telefono = document.getElementById('conf-telefono').value.trim();
+            var curso = document.getElementById('conf-curso').value.trim();
+
+            if (!nombre || !email || !telefono || !curso) {
+                toast('❌ Completa todos los campos', 'error');
+                return;
+            }
+
+            // Generar código de 6 dígitos
+            var codigo = '';
+            for (var i = 0; i < 6; i++) {
+                codigo += Math.floor(Math.random() * 10);
+            }
+
+            // Guardar confirmación
+            var confirmaciones = JSON.parse(localStorage.getItem('CLED_CONFIRMACIONES') || '[]');
+            confirmaciones.push({
+                eventoId: window._eventoActual || 'evento',
+                nombre: nombre,
+                email: email,
+                telefono: telefono,
+                curso: curso,
+                codigo: codigo,
+                fecha: new Date().toISOString(),
+                checkin: false
+            });
+            localStorage.setItem('CLED_CONFIRMACIONES', JSON.stringify(confirmaciones));
+
+            // Cerrar modal de formulario
+            document.getElementById('modal-evento').style.display = 'none';
+            document.getElementById('conf-nombre').value = '';
+            document.getElementById('conf-email').value = '';
+            document.getElementById('conf-telefono').value = '';
+            document.getElementById('conf-curso').value = '';
+
+            // Mostrar modal con código
+            document.getElementById('codigo-generado').textContent = codigo;
+            document.getElementById('datos-confirmacion').innerHTML = `
+                <p><strong>Nombre:</strong> ${nombre}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Teléfono:</strong> ${telefono}</p>
+                <p><strong>Curso:</strong> ${curso}</p>
+            `;
+            document.getElementById('modal-codigo').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            actualizarContadorEventos();
+        }
+
+        function enviarInscripcion() {
+            var grado = document.getElementById('i_grado').value;
+            
+            var datos = {
+                nombres: document.getElementById('i_nombres').value.trim(),
+                apellidos: document.getElementById('i_apellidos').value.trim(),
+                email: document.getElementById('i_email').value.trim(),
+                telefono: document.getElementById('i_telefono').value.trim(),
+                grado: grado,
+                seccion: document.getElementById('i_seccion').value.trim(),
+                modulo: grado !== '3ro' ? document.getElementById('i_modulo').value : '',
+                pasantia: grado === '6to' ? document.getElementById('i_pasantia').value : '',
+                clubId: document.getElementById('i_club').value,
+                motivo: document.getElementById('i_motivo').value.trim(),
+                objetivos: document.getElementById('i_objetivos').value.trim(),
+                aceptaTerminos: document.getElementById('i_terminos').checked,
+                aceptaNormas: document.getElementById('i_normas').checked
+            };
+
+            if (!datos.aceptaTerminos || !datos.aceptaNormas) {
+                toast('❌ Debes aceptar los términos y normativas', 'error');
+                return;
+            }
+
+            if (!datos.nombres || !datos.apellidos || !datos.email || !datos.clubId) {
+                toast('❌ Completa todos los campos obligatorios', 'error');
+                return;
+            }
+
+            // Guardar localmente
+            var inscripciones = JSON.parse(localStorage.getItem('CLED_INSCRIPCIONES') || '[]');
+            inscripciones.push({
+                id: Date.now(),
+                nombres: datos.nombres,
+                apellidos: datos.apellidos,
+                email: datos.email,
+                telefono: datos.telefono,
+                grado: datos.grado,
+                seccion: datos.seccion,
+                modulo: datos.modulo,
+                club_id: datos.clubId,
+                motivo: datos.motivo,
+                objetivos: datos.objetivos,
+                estado: 'pendiente',
+                created_at: new Date().toISOString()
+            });
+            localStorage.setItem('CLED_INSCRIPCIONES', JSON.stringify(inscripciones));
+
+            toast('✅ Inscripción enviada correctamente', 'success');
+            
+            // Limpiar formulario
+            document.getElementById('i_nombres').value = '';
+            document.getElementById('i_apellidos').value = '';
+            document.getElementById('i_email').value = '';
+            document.getElementById('i_telefono').value = '';
+            document.getElementById('i_grado').value = '';
+            document.getElementById('i_seccion').value = '';
+            document.getElementById('i_modulo').value = '';
+            document.getElementById('i_pasantia').value = '';
+            document.getElementById('i_club').value = '';
+            document.getElementById('i_motivo').value = '';
+            document.getElementById('i_objetivos').value = '';
+            document.getElementById('i_terminos').checked = false;
+            document.getElementById('i_normas').checked = false;
+            toggleCampos();
+        }
+
+        function enviarContacto() {
+            var datos = {
+                nombre: document.getElementById('c_nombre').value.trim(),
+                email: document.getElementById('c_email').value.trim(),
+                telefono: document.getElementById('c_telefono').value.trim(),
+                asunto: document.getElementById('c_asunto').value.trim(),
+                mensaje: document.getElementById('c_mensaje').value.trim()
+            };
+
+            if (!datos.nombre || !datos.email || !datos.asunto || !datos.mensaje) {
+                toast('❌ Completa todos los campos', 'error');
+                return;
+            }
+
+            var contactos = JSON.parse(localStorage.getItem('CLED_CONTACTOS') || '[]');
+            contactos.push(datos);
+            localStorage.setItem('CLED_CONTACTOS', JSON.stringify(contactos));
+
+            toast('✅ Mensaje enviado correctamente', 'success');
+            document.getElementById('c_nombre').value = '';
+            document.getElementById('c_email').value = '';
+            document.getElementById('c_telefono').value = '';
+            document.getElementById('c_asunto').value = '';
+            document.getElementById('c_mensaje').value = '';
+        }
+
+        function actualizarContadorEventos() {
+            var confirmaciones = JSON.parse(localStorage.getItem('CLED_CONFIRMACIONES') || '[]');
+            var statEventos = document.getElementById('stat-eventos-real');
+            if (statEventos) {
+                statEventos.textContent = confirmaciones.length;
+            }
+        }
+
+        // ═══════════════════════════════════════
+        // UTILIDADES
+        // ═══════════════════════════════════════
+        function toggleCampos() {
+            var grado = document.getElementById('i_grado').value;
+            var moduloWrap = document.getElementById('modulo-wrap');
+            var pasantiaWrap = document.getElementById('pasantia-wrap');
+            if (moduloWrap) moduloWrap.style.display = (grado !== '3ro' && grado !== '') ? '' : 'none';
+            if (pasantiaWrap) pasantiaWrap.style.display = (grado === '6to') ? '' : 'none';
+        }
+
+        function cerrarModal(id) {
+            document.getElementById(id).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function toast(msg, type) {
+            type = type || '';
+            var t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'show ' + type;
+            setTimeout(function() { t.className = ''; }, 3200);
+        }
+
+        // Prevenir refresh de formularios
+        document.addEventListener('submit', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // Cerrar modales
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                cerrarModal('modal-director');
+                cerrarModal('modal-evento');
+                cerrarModal('modal-codigo');
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'modal-director') cerrarModal('modal-director');
+            if (e.target.id === 'modal-evento') cerrarModal('modal-evento');
+            if (e.target.id === 'modal-codigo') cerrarModal('modal-codigo');
+        });
+    </script>
+</body>
+</html>
