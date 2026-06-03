@@ -3,6 +3,7 @@
 // api.js - CLED API para Supabase (PRODUCCIÓN)
 // ═══════════════════════════════════════════════════════════
 
+
 var SUPABASE_CONFIG = {
     url: 'https://lzkbrhefcmzmjscptacl.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6a2JyaGVmY216bWpzY3B0YWNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0Mjk5NTcsImV4cCI6MjA5NjAwNTk1N30.0Ekusl6Gj_SUCkrsaig4F8D6z8WW8bAKClwJA4jPOo8',
@@ -52,7 +53,6 @@ class CLED_API {
         }
     }
 
-    // ═══ AUTENTICACIÓN ═══
     async login(codigo, password) {
         var result = await this.request('miembros', {
             params: { codigo: 'eq.' + codigo, select: '*' }
@@ -61,7 +61,6 @@ class CLED_API {
             return { success: false, msg: 'Usuario no encontrado' };
         }
         var m = result.data[0];
-        // Verificar password (en producción usar bcrypt)
         if (m.password_hash !== password && m.password !== password) {
             return { success: false, msg: 'Contraseña incorrecta' };
         }
@@ -77,7 +76,6 @@ class CLED_API {
             terminosAceptados: m.terminos_aceptados || false
         };
         localStorage.setItem('CLED_SESSION', JSON.stringify(sesion));
-        // Actualizar last_login
         await this.request('miembros', {
             method: 'PATCH', params: { id: 'eq.' + m.id },
             body: { last_login: new Date().toISOString() }
@@ -85,7 +83,6 @@ class CLED_API {
         return { success: true, member: sesion };
     }
 
-    // ═══ MIEMBROS ═══
     async getMiembros(filtros) {
         filtros = filtros || {};
         var params = { select: '*', order: 'nombres.asc' };
@@ -114,8 +111,8 @@ class CLED_API {
                 pasantia_dia: datos.pasantia || '',
                 club: datos.club,
                 club_id: datos.clubId || null,
-                estado: 'Activo',
-                rol: 'Participante',
+                estado: datos.estado || 'Activo',
+                rol: datos.rol || 'Participante',
                 fecha_ingreso: new Date().toISOString().split('T')[0],
                 tutorial_visto: false,
                 terminos_aceptados: true
@@ -130,7 +127,6 @@ class CLED_API {
         });
     }
 
-    // ═══ INSCRIPCIONES ═══
     async getInscripciones(estado) {
         var params = { select: '*', order: 'created_at.desc' };
         if (estado) params.estado = 'eq.' + estado;
@@ -141,19 +137,13 @@ class CLED_API {
         return await this.request('inscripciones', {
             method: 'POST',
             body: {
-                nombres: datos.nombres,
-                apellidos: datos.apellidos,
-                email: datos.email,
-                telefono: datos.telefono || '',
+                nombres: datos.nombres, apellidos: datos.apellidos,
+                email: datos.email, telefono: datos.telefono || '',
                 fecha_nacimiento: datos.fechaNacimiento || null,
-                grado: datos.grado,
-                seccion: datos.seccion || '',
-                modulo: datos.modulo || '',
-                pasantia_dia: datos.pasantia || '',
-                club: datos.club,
-                club_id: datos.clubId || null,
-                motivo: datos.motivo || '',
-                objetivos: datos.objetivos || '',
+                grado: datos.grado, seccion: datos.seccion || '',
+                modulo: datos.modulo || '', pasantia_dia: datos.pasantia || '',
+                club: datos.club, club_id: datos.clubId || null,
+                motivo: datos.motivo || '', objetivos: datos.objetivos || '',
                 username_generado: datos.usernameGenerado,
                 password_generado: datos.passwordGenerado,
                 acepta_terminos: datos.aceptaTerminos || false,
@@ -173,12 +163,9 @@ class CLED_API {
         });
     }
 
-    // ═══ ANUNCIOS ═══
     async getAnuncios(club) {
         var params = { select: '*', order: 'fecha_publicacion.desc', activo: 'eq.true' };
-        if (club && club !== 'TODOS') {
-            params.or = '(es_global.eq.true,club.eq.' + club + ')';
-        }
+        if (club && club !== 'TODOS') params.or = '(es_global.eq.true,club.eq.' + club + ')';
         return await this.request('anuncios', { params: params });
     }
 
@@ -196,34 +183,35 @@ class CLED_API {
         });
     }
 
-    // ═══ REUNIONES ═══
     async getReuniones(club) {
         var params = { select: '*', order: 'fecha.asc' };
-        if (club && club !== 'TODOS') {
-            params.or = '(es_global.eq.true,club.eq.' + club + ')';
-        }
+        if (club && club !== 'TODOS') params.or = '(es_global.eq.true,club.eq.' + club + ')';
         return await this.request('reuniones', { params: params });
     }
 
-    async crearReunion(datos) {
-        return await this.request('reuniones', {
-            method: 'POST',
-            body: {
-                titulo: datos.titulo, tipo: datos.tipo || 'club',
-                fecha: datos.fecha, hora: datos.hora,
-                objetivo: datos.objetivo || null,
-                link_reunion: datos.link,
-                es_global: datos.esGlobal || false,
-                club: datos.esGlobal ? 'TODOS' : datos.club,
-                club_id: datos.clubId || null,
-                organizador_id: datos.organizadorId,
-                organizador_nombre: datos.organizadorNombre,
-                estado: 'programada'
-            }
-        });
-    }
+async crearReunion(datos) {
+    return await this.request('reuniones', {
+        method: 'POST',
+        body: {
+            titulo: datos.titulo,
+            tipo: datos.tipo || 'club',
+            fecha: datos.fecha,
+            hora: datos.hora,
+            objetivo: datos.objetivo || null,
+            link_reunion: datos.link,
+            es_global: datos.esGlobal || false,
+            club: datos.club || 'TODOS',
+            club_id: datos.clubId || null,
+            organizador_id: datos.organizadorId,
+            organizador_nombre: datos.organizadorNombre,
+            persona_id: datos.personaId || null,
+            persona_nombre: datos.personaNombre || null,
+            personas_multiples: datos.personasMultiples ? JSON.stringify(datos.personasMultiples) : null,
+            estado: 'programada'
+        }
+    });
+}
 
-    // ═══ ASISTENCIA ═══
     async getAsistencia(miembroId) {
         return await this.request('asistencias', {
             params: { miembro_id: 'eq.' + miembroId, select: '*', order: 'fecha.desc' }
@@ -236,26 +224,19 @@ class CLED_API {
             var d = lista[i];
             var r = await this.request('asistencias', {
                 method: 'POST',
-                body: {
-                    miembro_id: d.miembroId, club_id: d.clubId,
-                    fecha: d.fecha, modulo_tema: d.modulo,
-                    estado: d.estado, registrado_por: d.registradoPor
-                }
+                body: { miembro_id: d.miembroId, club_id: d.clubId, fecha: d.fecha, modulo_tema: d.modulo, estado: d.estado, registrado_por: d.registradoPor }
             });
             resultados.push(r);
         }
         return { success: resultados.every(function(r) { return r.success; }) };
     }
 
-    // ═══ CALIFICACIONES ═══
     async getCalificaciones(miembroId) {
         var visible = localStorage.getItem('CLED_CALIF_VISIBLE') !== 'false';
         var r = await this.request('calificaciones', {
             params: { miembro_id: 'eq.' + miembroId, select: '*', order: 'fecha_publicacion.desc' }
         });
-        if (r.success && r.data && !visible) {
-            r.data = r.data.filter(function(c) { return c.visible === true; });
-        }
+        if (r.success && r.data && !visible) r.data = r.data.filter(function(c) { return c.visible === true; });
         return r;
     }
 
@@ -265,13 +246,7 @@ class CLED_API {
             var d = lista[i];
             var r = await this.request('calificaciones', {
                 method: 'POST',
-                body: {
-                    miembro_id: d.miembroId, club_id: d.clubId,
-                    modulo: d.modulo, actividad: d.actividad,
-                    nota: d.nota, observacion: d.observacion || null,
-                    visible: true, visibilidad_global: true,
-                    publicado_por: d.publicadoPor
-                }
+                body: { miembro_id: d.miembroId, club_id: d.clubId, modulo: d.modulo, actividad: d.actividad, nota: d.nota, observacion: d.observacion || null, visible: true, visibilidad_global: true, publicado_por: d.publicadoPor }
             });
             resultados.push(r);
         }
@@ -283,7 +258,6 @@ class CLED_API {
         return { success: true };
     }
 
-    // ═══ EVENTOS ═══
     async getEventos() {
         return await this.request('eventos', {
             params: { select: '*', estado: 'eq.programado', order: 'fecha.asc' }
@@ -295,15 +269,7 @@ class CLED_API {
         for (var i = 0; i < 6; i++) codigo += Math.floor(Math.random() * 10);
         var r = await this.request('confirmaciones_eventos', {
             method: 'POST',
-            body: {
-                evento_id: datos.eventoId,
-                nombre_completo: datos.nombre,
-                email: datos.email,
-                telefono: datos.telefono || '',
-                curso: datos.curso || '',
-                codigo_confirmacion: codigo,
-                estado: 'confirmado'
-            }
+            body: { evento_id: datos.eventoId, nombre_completo: datos.nombre, email: datos.email, telefono: datos.telefono || '', curso: datos.curso || '', codigo_confirmacion: codigo, estado: 'confirmado' }
         });
         if (r.success) r.data = { codigo_confirmacion: codigo, nombre: datos.nombre };
         return r;
@@ -330,7 +296,6 @@ class CLED_API {
         return { success: true, data: { confirmados: d.length, presentes: d.filter(function(x) { return x.estado === 'checkin_realizado'; }).length, ausentes: d.filter(function(x) { return x.estado === 'confirmado'; }).length } };
     }
 
-    // ═══ DASHBOARD ═══
     async getDashboard() {
         var resultados = await Promise.all([
             this.request('miembros', { params: { select: 'estado,club' } }),
@@ -338,11 +303,8 @@ class CLED_API {
             this.request('eventos', { params: { select: 'estado' } }),
             this.request('reuniones', { params: { select: 'estado' } })
         ]);
-        var m = resultados[0].data || [];
-        var i = resultados[1].data || [];
-        var e = resultados[2].data || [];
-        var r = resultados[3].data || [];
-        return { success: true, data: { totalMiembros: m.length, miembrosActivos: m.filter(function(x) { return x.estado === 'Activo'; }).length, inscripcionesPendientes: i.filter(function(x) { return x.estado === 'pendiente'; }).length, eventosProgramados: e.filter(function(x) { return x.estado === 'programado'; }).length, reunionesProgramadas: r.length } };
+        var m = resultados[0].data || [], i = resultados[1].data || [], e = resultados[2].data || [], r = resultados[3].data || [];
+        return { success: true, data: { totalMiembros: m.length, miembrosActivos: m.filter(function(x) { return x.estado === 'Activo'; }).length, inscripcionesPendientes: i.filter(function(x) { return x.estado === 'pendiente'; }).length, eventosProgramados: e.length, reunionesProgramadas: r.length } };
     }
 
     async updateTutorialVisto(id) {
