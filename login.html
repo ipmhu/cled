@@ -18,9 +18,6 @@
         .btn-back { display: block; margin-top: 16px; color: #9CA3AF; text-decoration: none; }
         .btn-back:hover { color: #0F2A44; }
         #error { color: #E53935; font-size: 0.85rem; min-height: 20px; margin-top: 8px; }
-        .info { background: #F0F9FF; border-radius: 12px; padding: 16px; margin-top: 24px; font-size: 0.8rem; color: #1F4E79; border: 1px solid #BAE6FD; text-align: left; }
-        .info strong { display: block; margin-bottom: 8px; }
-        code { background: #E5E7EB; padding: 2px 6px; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -32,26 +29,17 @@
         <div id="error"></div>
         <button class="btn" id="btn" onclick="login()">INICIAR SESIÓN</button>
         <a href="index.html" class="btn-back">← Volver al sitio público</a>
-        <div class="info">
-            <strong>🔑 Acceso al sistema:</strong>
-            Admin: <code>ADM001</code> / <code>admin123</code><br>
-            Protocolo: <code>PRO001</code> / <code>pro123</code>
-        </div>
     </div>
 
     <script src="api.js"></script>
     <script>
         document.addEventListener('submit', function(e){ e.preventDefault(); return false; });
 
-        // Verificar sesión existente
         (function(){
             var s = localStorage.getItem('CLED_SESSION');
             if (s) {
-                try {
-                    var u = JSON.parse(s);
-                    localStorage.setItem('CLED_REDIRECT', u.rol);
-                    window.location.replace('index.html');
-                } catch(e) { localStorage.removeItem('CLED_SESSION'); }
+                try { var u = JSON.parse(s); localStorage.setItem('CLED_REDIRECT', u.rol); window.location.replace('index.html'); }
+                catch(e) { localStorage.removeItem('CLED_SESSION'); }
             }
         })();
 
@@ -61,10 +49,9 @@
             var err = document.getElementById('error');
             var btn = document.getElementById('btn');
             err.textContent = '';
-            if (!u || !p) { err.textContent = '❌ Completa todos los campos'; return; }
+            if (!u || !p) { err.textContent = 'Completa todos los campos'; return; }
             btn.disabled = true; btn.textContent = 'Verificando...';
 
-            // Intentar con API de Supabase
             if (typeof API !== 'undefined') {
                 var result = await API.login(u, p);
                 if (result.success) {
@@ -72,29 +59,10 @@
                     window.location.replace('index.html');
                     return;
                 }
+                err.textContent = result.msg || 'Credenciales incorrectas';
+            } else {
+                err.textContent = 'Error de conexión';
             }
-
-            // Fallback: buscar en localStorage
-            var miembros = JSON.parse(localStorage.getItem('CLED_MIEMBROS') || '[]');
-            for (var i = 0; i < miembros.length; i++) {
-                var m = miembros[i];
-                if ((m.codigo === u || m.username === u || m.id === u) && (m.password === p || m.pass === p)) {
-                    var sesion = {
-                        id: m.id, codigo: m.codigo || m.username,
-                        nombre: m.nombre || (m.nombres + ' ' + m.apellidos),
-                        email: m.email, rol: m.rol || 'Participante',
-                        club: m.club || 'TODOS', clubId: m.clubId || null,
-                        estado: m.estado, tutorialVisto: m.tutorialVisto || false,
-                        terminosAceptados: m.terminosAceptados || false
-                    };
-                    localStorage.setItem('CLED_SESSION', JSON.stringify(sesion));
-                    localStorage.setItem('CLED_REDIRECT', sesion.rol);
-                    window.location.replace('index.html');
-                    return;
-                }
-            }
-
-            err.textContent = '❌ Credenciales incorrectas';
             btn.disabled = false; btn.textContent = 'INICIAR SESIÓN';
         }
     </script>
