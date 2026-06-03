@@ -6,6 +6,7 @@
     <title>CLED | Club de Liderazgo, Expresión y Desarrollo</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --primary: #0F2A44; --primary-light: #1F4E79;
@@ -17,6 +18,8 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
         .hidden { display: none !important; }
+        
+        /* ── SITIO PÚBLICO ── */
         #public-site { min-height: 100vh; background: radial-gradient(circle at top left, rgba(39,78,121,0.12), transparent 30%), radial-gradient(circle at top right, rgba(38,166,154,0.08), transparent 22%), linear-gradient(180deg, #f8fbff 0%, #f5f7fa 100%); }
         .public-nav { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(16px); background: rgba(15,42,68,0.96); color: white; border-bottom: 1px solid rgba(255,255,255,0.08); }
         .public-nav-inner { max-width: 1280px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
@@ -26,62 +29,55 @@
         .public-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
         .public-links a, .public-links button { border: 0; background: transparent; color: rgba(255,255,255,0.92); text-decoration: none; font-family: 'Poppins', sans-serif; font-size: 0.85rem; padding: 8px 10px; border-radius: 999px; cursor: pointer; transition: .2s ease; }
         .public-links a:hover, .public-links button:hover { background: rgba(255,255,255,0.11); }
-        .public-login-btn { background: linear-gradient(135deg, #26A69A, #3ac1b4) !important; color: white !important; font-weight: 700 !important; padding: 10px 18px !important; box-shadow: 0 10px 26px rgba(38,166,154,.25); }
+        .public-login-btn { background: linear-gradient(135deg, #26A69A, #3ac1b4) !important; color: white !important; font-weight: 700 !important; padding: 10px 18px !important; }
         .public-logout-btn { background: rgba(229,57,53,0.8) !important; color: white !important; font-weight: 700 !important; padding: 10px 18px !important; }
         .public-shell { max-width: 1280px; margin: 0 auto; padding: 26px 24px 90px; }
         .section-title { font-size: 1.55rem; color: var(--primary); margin: 0 0 10px; }
-        .section-subtitle { color: #5b6472; margin: 0 0 18px; line-height: 1.7; }
         .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
-        .public-card { background: white; border: 1px solid rgba(17,24,39,.08); border-radius: 22px; box-shadow: 0 10px 30px rgba(15,42,68,.07); padding: 22px; transition: transform .2s ease, box-shadow .2s ease; overflow: hidden; }
-        .public-card:hover { transform: translateY(-4px); box-shadow: 0 16px 38px rgba(15,42,68,.12); }
+        .public-card { background: white; border: 1px solid rgba(17,24,39,.08); border-radius: 22px; box-shadow: 0 10px 30px rgba(15,42,68,.07); padding: 22px; transition: transform .2s; }
+        .public-card:hover { transform: translateY(-4px); }
         .timeline { display: grid; gap: 14px; }
-        .timeline-item { display: grid; grid-template-columns: 130px 1fr; gap: 16px; background: white; border: 1px solid rgba(17,24,39,.08); border-radius: 18px; padding: 18px 20px; box-shadow: 0 10px 24px rgba(15,42,68,.05); }
-        .timeline-date { font-weight: 700; color: var(--info); background: rgba(38,166,154,.09); border-radius: 14px; padding: 10px 12px; text-align: center; height: fit-content; }
-        .timeline-item h4 { margin: 0 0 8px; color: var(--primary); }
+        .timeline-item { display: grid; grid-template-columns: 130px 1fr; gap: 16px; background: white; border: 1px solid rgba(17,24,39,.08); border-radius: 18px; padding: 18px 20px; }
+        .timeline-date { font-weight: 700; color: var(--info); background: rgba(38,166,154,.09); border-radius: 14px; padding: 10px 12px; text-align: center; }
         .director-card { overflow: hidden; padding: 0; cursor: pointer; }
-        .director-photo { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; background: #eaf0f7; }
+        .director-photo { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eaf0f7; }
         .director-body { padding: 18px; }
-        .director-role { display: inline-flex; margin-bottom: 8px; font-size: .75rem; font-weight: 700; letter-spacing: .08em; color: var(--info); text-transform: uppercase; }
-        .stats-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 18px 0 0; }
-        .stat-tile { background: white; border-radius: 18px; padding: 18px; border: 1px solid rgba(17,24,39,.08); box-shadow: 0 10px 24px rgba(15,42,68,.05); }
+        .director-role { display: inline-flex; margin-bottom: 8px; font-size: .75rem; font-weight: 700; color: var(--info); text-transform: uppercase; }
+        .stats-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-top: 18px; }
+        .stat-tile { background: white; border-radius: 18px; padding: 18px; border: 1px solid rgba(17,24,39,.08); }
         .stat-tile strong { display: block; font-size: 1.6rem; color: var(--primary); }
-        .stat-tile span { color: #667085; font-size: .9rem; }
-        .evento-card { background: white; border-radius: 18px; padding: 20px; margin-bottom: 16px; border: 1px solid rgba(17,24,39,.08); display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center; }
+        .evento-card { background: white; border-radius: 18px; padding: 20px; margin-bottom: 16px; display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center; border: 1px solid rgba(17,24,39,.08); }
         .evento-fecha { text-align: center; padding: 12px; background: var(--bg); border-radius: 12px; min-width: 100px; }
-        .evento-fecha strong { display: block; font-size: 1.2rem; color: var(--primary); }
-        .check-line { display: flex; gap: 10px; align-items: center; justify-content: center; padding: 14px; background: #f8fbff; border-radius: 16px; border: 1px solid #e5edf6; text-align: center; }
-        .check-line input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
-        .check-line a { color: #205cd6; font-weight: 700; text-decoration: none; }
+        .check-line { display: flex; gap: 10px; align-items: center; justify-content: center; padding: 14px; background: #f8fbff; border-radius: 16px; border: 1px solid #e5edf6; }
+        .check-line a { color: #205cd6; font-weight: 700; }
+        
+        /* ── PANEL ── */
         #panel-app { display: none; height: 100vh; }
         #panel-app.active { display: flex; }
-        .sidebar { width: 260px; min-width: 260px; max-width: 260px; background: var(--primary); color: white; display: flex; flex-direction: column; padding: 20px 14px; flex-shrink: 0; height: 100vh; overflow-y: auto; z-index: 100; transition: none; }
-        .sidebar-logo { text-align: center; margin-bottom: 8px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar-logo h2 { letter-spacing: 3px; margin: 8px 0 2px; font-size: 1.1rem; }
+        .sidebar { width: 260px; min-width: 260px; max-width: 260px; background: var(--primary); color: white; display: flex; flex-direction: column; padding: 20px 14px; flex-shrink: 0; height: 100vh; overflow-y: auto; transition: none; }
+        .sidebar-logo { text-align: center; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-logo h2 { letter-spacing: 3px; font-size: 1.1rem; }
         .sidebar-logo small { color: rgba(255,255,255,0.5); font-size: 0.7rem; }
         .nav-section-label { color: rgba(255,255,255,0.35); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; padding: 16px 14px 4px; font-weight: 600; }
         .nav-btn { background: transparent; color: rgba(255,255,255,0.7); text-align: left; padding: 10px 14px; margin-bottom: 2px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.2s; font-weight: 500; font-size: 0.85rem; font-family: 'Poppins', sans-serif; width: 100%; display: flex; align-items: center; gap: 10px; }
         .nav-btn:hover { background: rgba(255,255,255,0.1); color: white; }
         .nav-btn.active { background: var(--info); color: white; font-weight: 600; }
         .nav-btn.logout-btn { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px; margin-top: 8px; color: #ff6b6b; }
-        .nav-btn.logout-btn:hover { background: rgba(255,107,107,0.2); }
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .top-bar { background: var(--surface); height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 10; }
-        .top-bar h3 { margin: 0; font-weight: 600; color: var(--primary); font-size: 1rem; }
+        .top-bar { background: var(--surface); height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+        .top-bar h3 { font-weight: 600; color: var(--primary); font-size: 1rem; }
         .user-chip { display: flex; align-items: center; gap: 10px; background: var(--bg); border-radius: 30px; padding: 6px 14px; }
-        .user-chip .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--info); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
-        .user-info { line-height: 1.2; }
-        .user-info .user-name { font-size: 0.85rem; font-weight: 600; }
-        .user-info .user-role { font-size: 0.7rem; color: var(--text-muted); }
+        .user-chip .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--info); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; }
         .scroll-area { padding: 28px; overflow-y: auto; flex: 1; }
-        .card { background: var(--surface); padding: 22px 24px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid var(--border); animation: fadeIn 0.3s ease; }
+        .card { background: var(--surface); padding: 22px 24px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid var(--border); }
         .card h3 { margin: 0 0 16px; font-size: 1rem; color: var(--primary); display: flex; align-items: center; gap: 8px; }
         .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
         .stat-card { background: var(--surface); border-radius: var(--radius); padding: 20px 22px; box-shadow: var(--shadow); border: 1px solid var(--border); border-left: 4px solid var(--info); }
-        .stat-card .label { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .stat-card .value { font-size: 2rem; font-weight: 700; color: var(--primary); line-height: 1.2; }
-        .stat-card .sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
-        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .stat-card .label { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; }
+        .stat-card .value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
         .btn-primary { background: var(--primary); color: white; } .btn-primary:hover { background: var(--primary-light); }
         .btn-info { background: var(--info); color: white; } .btn-info:hover { filter: brightness(1.1); }
         .btn-success { background: var(--success); color: white; } .btn-success:hover { filter: brightness(1.1); }
@@ -89,11 +85,10 @@
         .btn-danger { background: var(--danger); color: white; }
         .btn-ghost { background: transparent; color: var(--primary); border: 1px solid var(--border); } .btn-ghost:hover { background: var(--bg); }
         .btn-sm { padding: 6px 14px; font-size: 0.78rem; }
-        .btn-wide { width: 100%; justify-content: center; padding: 14px 18px; font-size: 1rem; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-wide { width: 100%; justify-content: center; padding: 14px 18px; }
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--primary); margin-bottom: 6px; }
-        .form-control { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; background: #F9FAFB; transition: border-color 0.2s; }
+        .form-control { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; background: #F9FAFB; }
         .form-control:focus { outline: none; border-color: var(--info); background: white; }
         textarea.form-control { resize: vertical; min-height: 80px; }
         .table-wrap { overflow-x: auto; }
@@ -105,17 +100,18 @@
         .badge { padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; }
         .badge-success { background: #E8F5E9; color: #2E7D32; } .badge-danger { background: #FFEBEE; color: #C62828; }
         .badge-warning { background: #FFF8E1; color: #F57F17; } .badge-info { background: #E0F2F1; color: #00695C; }
+        .badge-primary { background: #E3F2FD; color: #1565C0; }
         .progress-bar { background: #E5E7EB; height: 8px; border-radius: 4px; overflow: hidden; margin: 6px 0; }
-        .progress-fill { height: 100%; border-radius: 4px; background: var(--info); transition: width 0.5s ease; }
+        .progress-fill { height: 100%; border-radius: 4px; background: var(--info); }
         .anuncio-card { border-radius: var(--radius); padding: 18px 20px; border: 1px solid var(--border); margin-bottom: 14px; background: var(--surface); border-left: 4px solid var(--accent); }
         .anuncio-card .meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; }
         .asistencia-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; background: #FAFAFA; }
         .radio-group { display: flex; gap: 8px; }
-        .radio-group label { padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; font-weight: 600; border: 1.5px solid var(--border); transition: all 0.15s; }
+        .radio-group label { padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; font-weight: 600; border: 2px solid var(--border); transition: all 0.15s; }
         .radio-group input[type=radio] { display: none; }
-        .radio-group input:checked + label.presente { background: #E8F5E9; color: #2E7D32; border-color: #2E7D32; }
-        .radio-group input:checked + label.ausente { background: #FFEBEE; color: #C62828; border-color: #C62828; }
-        .radio-group input:checked + label.tardanza { background: #FFF8E1; color: #F57F17; border-color: #F57F17; }
+        .radio-group input:checked + label.presente { background: #E8F5E9; color: #2E7D32; border-color: #2E7D32; font-weight: 700; }
+        .radio-group input:checked + label.excusa { background: #FFF8E1; color: #F57F17; border-color: #F57F17; font-weight: 700; }
+        .radio-group input:checked + label.ausente { background: #FFEBEE; color: #C62828; border-color: #C62828; font-weight: 700; }
         .alert { padding: 14px 18px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 16px; }
         .alert-info { background: #E0F7FA; color: #006064; border-left: 4px solid var(--info); }
         .alert-success { background: #E8F5E9; color: #1B5E20; border-left: 4px solid var(--success); }
@@ -124,72 +120,64 @@
         .loader-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px; gap: 12px; color: var(--text-muted); }
         .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--info); border-radius: 50%; animation: spin 0.7s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .nota-item { display: flex; align-items: center; gap: 10px; padding: 10px; background: #FFF8E1; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid var(--warning); }
+        .nota-item.completada { background: #E8F5E9; border-left-color: var(--success); text-decoration: line-through; opacity: 0.7; }
+        .nota-item.pospuesta { background: #FFEBEE; border-left-color: var(--danger); }
+        .nota-texto { flex: 1; font-size: 0.9rem; }
+        
+        /* ── TARJETA FLOTANTE ── */
+        .floating-card-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.2s ease; }
+        .floating-card { background: white; border-radius: 20px; padding: 32px; max-width: 500px; width: 90%; box-shadow: 0 25px 80px rgba(0,0,0,0.4); text-align: center; animation: slideUp 0.3s ease; }
+        .floating-card h3 { color: var(--primary); margin-bottom: 8px; font-size: 1.2rem; }
+        .floating-card .icon-success { font-size: 3rem; color: var(--success); margin-bottom: 12px; }
+        .floating-card .credenciales { background: #f8f9fa; border-radius: 12px; padding: 16px; margin: 16px 0; text-align: left; }
+        .floating-card .credenciales p { margin-bottom: 6px; font-size: 0.9rem; }
+        .floating-card .credenciales strong { color: var(--primary); }
+        .floating-card .codigo-box { background: var(--primary); color: var(--success); padding: 16px; border-radius: 8px; font-size: 1.8rem; font-weight: 700; letter-spacing: 6px; font-family: monospace; margin: 12px 0; }
+        
+        /* ── MODALES ── */
         .modal-wiki { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 1000; display: none; align-items: center; justify-content: center; }
-        .wiki-content { background: #f8f9fa; border-radius: 4px; max-width: 900px; width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 50px rgba(0,0,0,0.5); animation: fadeIn 0.3s ease; }
-        .wiki-header { background: var(--primary); color: white; padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .wiki-header h2 { margin: 0; font-size: 1.3rem; color: white; }
-        .wiki-nav { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 18px; border-radius: 4px; cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem; }
-        .wiki-nav:hover { background: rgba(255,255,255,0.25); }
-        .wiki-layout { display: grid; grid-template-columns: 200px 1fr; gap: 0; min-height: 400px; }
+        .wiki-content { background: #f8f9fa; border-radius: 4px; max-width: 900px; width: 95%; max-height: 90vh; overflow-y: auto; }
+        .wiki-header { background: var(--primary); color: white; padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; }
+        .wiki-header h2 { font-size: 1.3rem; color: white; }
+        .wiki-nav { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 18px; border-radius: 4px; cursor: pointer; font-weight: 600; }
+        .wiki-layout { display: grid; grid-template-columns: 200px 1fr; }
         .wiki-sidebar { background: white; padding: 24px 18px; border-right: 1px solid #e0e0e0; text-align: center; }
-        .wiki-foto-perfil { width: 120px; height: 120px; border-radius: 4px; object-fit: cover; margin-bottom: 16px; border: 3px solid var(--primary); }
-        .wiki-nombre-cargo h3 { color: var(--primary); font-size: 1rem; margin-bottom: 4px; }
-        .wiki-cargo { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .wiki-dato-rapido { text-align: left; margin-bottom: 12px; font-size: 0.82rem; padding: 8px; background: #f8f9fa; border-radius: 4px; }
-        .wiki-dato-rapido strong { display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .wiki-foto-perfil { width: 120px; height: 120px; border-radius: 4px; object-fit: cover; border: 3px solid var(--primary); }
         .wiki-main { background: white; padding: 28px; }
-        .wiki-main h3 { color: var(--primary); font-size: 1.1rem; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 2px solid #e0e0e0; }
-        .wiki-main h3:first-child { margin-top: 0; }
-        .wiki-main p { line-height: 1.8; color: #333; margin-bottom: 12px; }
-        .wiki-main ul { margin-left: 20px; margin-bottom: 12px; }
-        .wiki-main li { margin-bottom: 6px; color: #555; line-height: 1.6; }
-        .modal-confirmacion { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; display: none; align-items: center; justify-content: center; }
-        .confirmacion-content { background: white; border-radius: 16px; max-width: 550px; width: 95%; padding: 28px; text-align: center; animation: fadeIn 0.3s ease; }
-        .codigo-display { background: #0F2A44; color: #4CAF50; font-size: 2.5rem; font-weight: 700; padding: 20px; border-radius: 12px; letter-spacing: 8px; margin: 16px 0; font-family: monospace; }
-        .screenshot-aviso { background: #FFF8E1; border: 2px dashed #F57C00; padding: 12px; border-radius: 8px; margin: 12px 0; color: #E65100; font-weight: 600; font-size: 0.9rem; }
+        .wiki-main h3 { color: var(--primary); margin: 20px 0 10px; border-bottom: 2px solid #e0e0e0; }
         #toast { position: fixed; bottom: 24px; right: 24px; background: var(--primary); color: white; padding: 14px 20px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transform: translateY(80px); opacity: 0; transition: all 0.3s; z-index: 9999; }
         #toast.show { transform: translateY(0); opacity: 1; }
         #toast.success { background: var(--success); } #toast.error { background: var(--danger); }
-        .tutorial-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; }
-        .tutorial-card { background: white; border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; text-align: center; }
-        .tutorial-step { display: inline-block; background: var(--info); color: white; padding: 4px 16px; border-radius: 20px; font-size: 0.8rem; margin-bottom: 16px; }
-        .tutorial-card h2 { color: var(--primary); margin-bottom: 12px; }
-        .tutorial-card p { color: #5b6472; margin-bottom: 24px; line-height: 1.6; }
-        .tutorial-actions { display: flex; gap: 12px; justify-content: center; }
-        .terminos-contenido { max-height: 200px; overflow-y: auto; text-align: left; padding: 16px; background: #F9FAFB; border-radius: 8px; margin: 16px 0; font-size: 0.85rem; line-height: 1.6; }
-        .checkbox-terminos { display: flex; align-items: center; gap: 10px; margin: 16px 0; justify-content: center; }
-        #protocolo-site { display: none; min-height: 100vh; background: linear-gradient(135deg, #0F2A44 0%, #1F4E79 100%); padding: 20px; }
+        
+        #protocolo-site { display: none; min-height: 100vh; background: linear-gradient(135deg, #0F2A44, #1F4E79); padding: 20px; }
         #protocolo-site.active { display: block; }
         .protocolo-container { max-width: 800px; margin: 0 auto; }
-        .protocolo-header { background: white; border-radius: 20px; padding: 24px 32px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
-        .protocolo-header h1 { color: var(--primary); font-size: 1.5rem; }
-        .user-badge { display: flex; align-items: center; gap: 10px; background: var(--bg); padding: 8px 16px; border-radius: 30px; }
-        .user-badge .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--info); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .protocolo-header { background: white; border-radius: 20px; padding: 24px 32px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
         .stat-box { text-align: center; padding: 20px; background: white; border-radius: 12px; border: 1px solid var(--border); }
         .stat-box .numero { font-size: 2rem; font-weight: 700; color: var(--primary); }
-        .stat-box .etiqueta { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
-        .resultado-card { border-radius: 16px; padding: 24px; margin-top: 16px; border: 2px solid var(--success); }
-        .resultado-card.success { background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); border-color: var(--success); }
-        .resultado-card.error { background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%); border-color: var(--danger); }
-        .icono-status { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; }
-        .icono-success { background: var(--success); } .icono-error { background: var(--danger); }
+        .resultado-card { border-radius: 16px; padding: 24px; margin-top: 16px; }
+        .resultado-card.success { background: #E8F5E9; border: 2px solid var(--success); }
+        .resultado-card.error { background: #FFEBEE; border: 2px solid var(--danger); }
         .datos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
         .dato-item { background: white; padding: 12px; border-radius: 8px; }
-        .dato-item strong { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
+        .dato-item strong { display: block; font-size: 0.75rem; color: var(--text-muted); }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
         @media (max-width: 768px) { .wiki-layout { grid-template-columns: 1fr; } .sidebar { width: 220px; min-width: 220px; max-width: 220px; } }
-        @media (max-width: 980px) { .timeline-item { grid-template-columns: 1fr; } .evento-card { grid-template-columns: 1fr; text-align: center; } }
+        @media (max-width: 980px) { .timeline-item { grid-template-columns: 1fr; } .evento-card { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-<!-- ═══════════════════ SITIO PÚBLICO ═══════════════════ -->
+<!-- ═══════════════ SITIO PÚBLICO ═══════════════ -->
 <div id="public-site">
     <header class="public-nav">
         <div class="public-nav-inner">
             <a class="brand-mark" onclick="navegarPublica('inicio');return false;"><div class="brand-title"><strong>CLED</strong><span>Club de Liderazgo, Expresión y Desarrollo</span></div></a>
-            <div class="public-links" id="public-links">
+            <div class="public-links">
                 <a href="#" onclick="navegarPublica('inicio');return false;">Inicio</a>
                 <a href="#" onclick="navegarPublica('historia');return false;">Historia</a>
                 <a href="#" onclick="navegarPublica('directiva');return false;">Directiva</a>
@@ -204,9 +192,9 @@
     <main class="public-shell" id="public-content"></main>
 </div>
 
-<!-- ═══════════════════ PANEL ═══════════════════ -->
+<!-- ═══════════════ PANEL ═══════════════ -->
 <div id="panel-app">
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar">
         <div class="sidebar-logo"><h2>CLED</h2><small>Panel de Gestión</small></div>
         <nav id="sidebar-nav" style="flex:1;margin-top:8px;"></nav>
         <button class="nav-btn logout-btn" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
@@ -216,7 +204,7 @@
             <h3 id="view-title">Dashboard</h3>
             <div class="user-chip">
                 <div class="avatar" id="user-avatar">?</div>
-                <div class="user-info"><div class="user-name" id="user-name"></div><div class="user-role" id="user-role"></div></div>
+                <div><div id="user-name" style="font-size:0.85rem;font-weight:600;"></div><div id="user-role" style="font-size:0.7rem;color:var(--text-muted);"></div></div>
                 <button class="btn btn-sm btn-ghost" onclick="volverSitioPublico()">🌐 Web</button>
             </div>
         </header>
@@ -224,112 +212,89 @@
     </main>
 </div>
 
-<!-- ═══════════════════ PROTOCOLO ═══════════════════ -->
+<!-- ═══════════════ PROTOCOLO ═══════════════ -->
 <div id="protocolo-site">
     <div class="protocolo-container">
-        <header class="protocolo-header">
-            <h1>🔐 Panel de Protocolo</h1>
-            <div class="user-badge"><div class="avatar" id="proto-avatar">?</div><div><strong id="proto-nombre"></strong><div style="font-size:0.7rem;color:var(--text-muted);">Protocolo</div></div></div>
-            <button class="btn btn-sm btn-ghost" onclick="cerrarSesion()">Cerrar Sesión</button>
-        </header>
-        <div class="card"><h2>✅ Verificación</h2>
-            <div class="form-group"><label>Código</label><input id="codigo-input" class="form-control" placeholder="123456" style="text-align:center;letter-spacing:4px;" onkeypress="if(event.key==='Enter')verificarCodigoProtocolo()"></div>
-            <button class="btn btn-primary btn-wide" onclick="verificarCodigoProtocolo()">🔍 Verificar</button>
-            <div id="resultado-verificacion"></div>
-        </div>
-        <div class="card"><h2>📊 Estadísticas</h2>
-            <div class="stats-grid">
-                <div class="stat-box"><div class="numero" id="stat-confirmados" style="color:var(--info);">0</div><div class="etiqueta">Confirmados</div></div>
-                <div class="stat-box"><div class="numero" id="stat-presentes" style="color:var(--success);">0</div><div class="etiqueta">Presentes</div></div>
-                <div class="stat-box"><div class="numero" id="stat-ausentes" style="color:var(--danger);">0</div><div class="etiqueta">Ausentes</div></div>
-            </div>
-            <button class="btn btn-primary" style="margin-top:16px;" onclick="actualizarEstadisticasProtocolo()">🔄 Actualizar</button>
-        </div>
+        <header class="protocolo-header"><h1>🔐 Panel de Protocolo</h1><div class="user-chip"><div class="avatar" id="proto-avatar">?</div><div><strong id="proto-nombre"></strong></div></div><button class="btn btn-sm btn-ghost" onclick="cerrarSesion()">Cerrar Sesión</button></header>
+        <div class="card"><h2>✅ Verificación</h2><input id="codigo-input" class="form-control" placeholder="Código" style="text-align:center;letter-spacing:4px;" onkeypress="if(event.key==='Enter')verificarCodigoProtocolo()"><button class="btn btn-primary btn-wide" onclick="verificarCodigoProtocolo()" style="margin-top:8px;">🔍 Verificar</button><div id="resultado-verificacion"></div></div>
+        <div class="card"><h2>📊 Estadísticas</h2><div class="stats-grid"><div class="stat-box"><div class="numero" id="stat-confirmados">0</div><div class="etiqueta">Confirmados</div></div><div class="stat-box"><div class="numero" id="stat-presentes">0</div><div class="etiqueta">Presentes</div></div><div class="stat-box"><div class="numero" id="stat-ausentes">0</div><div class="etiqueta">Ausentes</div></div></div></div>
     </div>
 </div>
 
-<!-- ═══════════════════ MODALES ═══════════════════ -->
+<!-- ═══════════════ MODALES ═══════════════ -->
 <div id="modal-director" class="modal-wiki">
     <div class="wiki-content">
-        <div class="wiki-header"><button class="wiki-nav" onclick="navegarDirector(-1)">← Anterior</button><h2 id="wiki-titulo-header"></h2><button class="wiki-nav" onclick="navegarDirector(1)">Siguiente →</button></div>
-        <div class="wiki-layout">
-            <div class="wiki-sidebar"><img class="wiki-foto-perfil" id="wiki-foto" src="" onerror="this.src='https://ui-avatars.com/api/?name=CLED&background=0F2A44&color=fff&size=200'"><div class="wiki-nombre-cargo"><h3 id="wiki-nombre-corto"></h3><div class="wiki-cargo" id="wiki-cargo-corto"></div></div><div class="wiki-dato-rapido"><strong>Formación</strong><span id="wiki-formacion-corto"></span></div><div class="wiki-dato-rapido"><strong>Contacto</strong><span id="wiki-email-corto"></span></div></div>
-            <div class="wiki-main"><h3>Biografía</h3><p id="wiki-historia"></p><h3>Logros</h3><ul id="wiki-logros"></ul></div>
-        </div>
-        <div style="text-align:center;padding:16px;background:white;border-top:1px solid #e0e0e0;"><button class="btn btn-ghost" onclick="cerrarModal('modal-director')">Cerrar</button></div>
+        <div class="wiki-header"><button class="wiki-nav" onclick="navegarDirector(-1)">←</button><h2 id="wiki-titulo-header"></h2><button class="wiki-nav" onclick="navegarDirector(1)">→</button></div>
+        <div class="wiki-layout"><div class="wiki-sidebar"><img class="wiki-foto-perfil" id="wiki-foto" src="" onerror="this.src='https://ui-avatars.com/api/?name=CLED&background=0F2A44&color=fff&size=200'"><div><h3 id="wiki-nombre-corto"></h3><div style="color:var(--text-muted);font-size:0.8rem;" id="wiki-cargo-corto"></div></div><div class="wiki-dato-rapido"><strong>Formación</strong><span id="wiki-formacion-corto"></span></div><div class="wiki-dato-rapido"><strong>Contacto</strong><span id="wiki-email-corto"></span></div></div><div class="wiki-main"><h3>Biografía</h3><p id="wiki-historia"></p><h3>Logros</h3><ul id="wiki-logros"></ul></div></div>
+        <div style="text-align:center;padding:16px;background:white;"><button class="btn btn-ghost" onclick="cerrarModal('modal-director')">Cerrar</button></div>
     </div>
 </div>
-<div id="modal-evento" class="modal-wiki"><div class="wiki-content" style="max-width:500px;border-radius:16px;"><h2 style="text-align:center;padding:20px;">Confirmar Asistencia</h2><div style="padding:0 28px 28px;"><div class="field" style="margin-bottom:12px;"><label>Nombre</label><input id="conf-nombre" class="form-control"></div><div class="field" style="margin-bottom:12px;"><label>Email</label><input id="conf-email" class="form-control" type="email"></div><div class="field" style="margin-bottom:12px;"><label>Teléfono</label><input id="conf-telefono" class="form-control"></div><div class="field" style="margin-bottom:12px;"><label>Curso</label><input id="conf-curso" class="form-control"></div><button class="btn btn-success btn-wide" onclick="confirmarAsistenciaEvento()">✓ Confirmar</button><button class="btn btn-ghost btn-wide" onclick="cerrarModal('modal-evento')" style="margin-top:8px;">Cancelar</button></div></div></div>
-<div id="modal-codigo" class="modal-confirmacion"><div class="confirmacion-content"><h2 style="color:var(--success);">✅ ¡Confirmado!</h2><p>Tu código:</p><div class="codigo-display" id="codigo-generado">------</div><div class="screenshot-aviso">📸 ¡TOMA CAPTURA!</div><div id="datos-confirmacion" style="text-align:left;margin:12px 0;font-size:0.9rem;"></div><button class="btn btn-primary btn-wide" onclick="cerrarModal('modal-codigo')">Entendido</button></div></div>
-<div id="tutorial-overlay" class="tutorial-overlay hidden"><div class="tutorial-card"><div id="tutorial-content"></div></div></div>
+<div id="modal-evento" class="modal-wiki"><div class="wiki-content" style="max-width:500px;"><h2 style="text-align:center;padding:20px;">Confirmar Asistencia</h2><div style="padding:0 28px 28px;"><input id="conf-nombre" class="form-control" placeholder="Nombre" style="margin-bottom:8px;"><input id="conf-email" class="form-control" type="email" placeholder="Email" style="margin-bottom:8px;"><input id="conf-telefono" class="form-control" placeholder="Teléfono" style="margin-bottom:8px;"><input id="conf-curso" class="form-control" placeholder="Curso" style="margin-bottom:8px;"><button class="btn btn-success btn-wide" onclick="confirmarAsistenciaEvento()">✓ Confirmar</button><button class="btn btn-ghost btn-wide" onclick="cerrarModal('modal-evento')" style="margin-top:8px;">Cancelar</button></div></div></div>
+<div id="modal-codigo" class="modal-wiki"><div class="wiki-content" style="max-width:500px;text-align:center;padding:32px;"><h2 style="color:var(--success);">✅ ¡Confirmado!</h2><p style="margin:8px 0;">Tu código:</p><div style="background:var(--primary);color:var(--success);padding:16px;border-radius:8px;font-size:2rem;font-weight:700;letter-spacing:6px;font-family:monospace;" id="codigo-generado">------</div><div style="background:#FFF8E1;border:2px dashed #F57C00;padding:12px;border-radius:8px;margin:12px 0;color:#E65100;font-weight:600;">📸 ¡TOMA CAPTURA!</div><button class="btn btn-primary btn-wide" onclick="cerrarModal('modal-codigo')">Entendido</button></div></div>
 <div id="toast"></div>
 
+<script src="api.js"></script>
 <script>
-// ═══════════════════ VARIABLES GLOBALES ═══════════════════
+// ═══════════════════════════ DATOS GLOBALES ═══════════════════════════
 var USUARIO = null;
 var MODO = 'publico';
 var directorActual = 0;
-var PASO_TUTORIAL = 0;
-var MIEMBROS_DB = [];
-var ANUNCIOS_DB = [];
-var REUNIONES_DB = [];
-var ASISTENCIAS_DB = [];
-var CALIFICACIONES_DB = [];
+
+// Base de datos local (respaldo cuando no hay API)
+var DB = {
+    miembros: JSON.parse(localStorage.getItem('CLED_MIEMBROS') || '[]'),
+    inscripciones: JSON.parse(localStorage.getItem('CLED_INSCRIPCIONES') || '[]'),
+    anuncios: JSON.parse(localStorage.getItem('CLED_ANUNCIOS') || '[]'),
+    reuniones: JSON.parse(localStorage.getItem('CLED_REUNIONES') || '[]'),
+    asistencias: JSON.parse(localStorage.getItem('CLED_ASISTENCIAS') || '[]'),
+    calificaciones: JSON.parse(localStorage.getItem('CLED_CALIFICACIONES') || '[]'),
+    confirmaciones: JSON.parse(localStorage.getItem('CLED_CONFIRMACIONES') || '[]'),
+    contactos: JSON.parse(localStorage.getItem('CLED_CONTACTOS') || '[]'),
+    notas: JSON.parse(localStorage.getItem('CLED_NOTAS') || '[]'),
+    boletinPermisos: JSON.parse(localStorage.getItem('CLED_BOLETIN_PERMISOS') || '{}')
+};
+
+function guardarDB(clave) {
+    localStorage.setItem('CLED_' + clave.toUpperCase(), JSON.stringify(DB[clave]));
+}
 
 var DIRECTIVA_DATA = [
-    { id:1, nombre:'Robelin Mejías', cargo:'Director General', foto:'CLEDWEB/Robelin.png', historia:'Robelin Mejías es un visionario del desarrollo estudiantil que transformó el CLED en una plataforma integral de liderazgo.', logros:['Fundador del Club de Comunicación Social y Periodismo','Digitalización completa de procesos institucionales','Reconocimiento del Distrito Educativo 15-01'], formacion:'Desarrollo y Administración de Aplicaciones Informáticas', email:'robelin@cled.edu.do' },
-    { id:2, nombre:'Jennyfer López', cargo:'Directora General', foto:'CLEDWEB/Jennyfer.png', historia:'Jennyfer López lidera la excelencia académica del CLED con una sólida formación en gestión educativa.', logros:['Diseño del currículo de liderazgo integral','Implementación del sistema de evaluación continua'], formacion:'Gestión Administrativa y Tributaria', email:'jennyfer@cled.edu.do' },
-    { id:3, nombre:'Shiley Aracena', cargo:'Directora General', foto:'CLEDWEB/Shiley.png', historia:'Shiley Aracena coordina la logística y operaciones del CLED con precisión y eficiencia.', logros:['Optimización de procesos operativos institucionales','Coordinación de +50 eventos exitosos'], formacion:'Logística y Transporte', email:'shiley@cled.edu.do' }
+    { id:1, nombre:'Robelin Mejías', cargo:'Director General', foto:'CLEDWEB/Robelin.png', historia:'Robelin Mejías es un visionario del desarrollo estudiantil que transformó el CLED en una plataforma integral de liderazgo. Con más de 3 años de experiencia en gestión de proyectos educativos, ha liderado la digitalización completa de los procesos institucionales y la expansión del club a nivel distrital. Su enfoque innovador combina tecnología, comunicación y liderazgo para crear experiencias transformadoras en toda la comunidad educativa.', logros:['Fundador del Club de Comunicación Social y Periodismo (2025)','Digitalización completa de procesos institucionales','Reconocimiento del Distrito Educativo 15-01 (2025)','Liderazgo en la expansión a 5 clubes activos','Implementación del sistema de gestión integral CLED'], formacion:'Desarrollo y Administración de Aplicaciones Informáticas', email:'robelin@cled.edu.do' },
+    { id:2, nombre:'Jennyfer López', cargo:'Directora General', foto:'CLEDWEB/Jennyfer.png', historia:'Jennyfer López lidera la excelencia académica del CLED con una sólida formación en gestión educativa. Ha diseñado el currículo de liderazgo que hoy impacta a más de 200 estudiantes, implementando sistemas de evaluación continua y metodologías innovadoras de enseñanza. Su pasión por la educación se refleja en cada programa y actividad del club, asegurando estándares de calidad en todos los procesos formativos.', logros:['Diseño del currículo de liderazgo integral','Implementación del sistema de evaluación continua','Desarrollo de programas de mentoría estudiantil','Coordinación de +30 talleres formativos'], formacion:'Gestión Administrativa y Tributaria', email:'jennyfer@cled.edu.do' },
+    { id:3, nombre:'Shiley Aracena', cargo:'Directora General', foto:'CLEDWEB/Shiley.png', historia:'Shiley Aracena coordina la logística y operaciones del CLED con precisión y eficiencia. Su experiencia en gestión de proyectos y logística ha permitido que cada evento, taller y actividad del club se ejecute de manera impecable. Ha coordinado más de 50 eventos exitosos, estableciendo estándares de calidad operativa que garantizan el buen funcionamiento de todas las iniciativas del club.', logros:['Optimización de procesos operativos institucionales','Coordinación de +50 eventos exitosos','Implementación de sistemas de gestión de recursos','Estandarización de protocolos de eventos'], formacion:'Logística y Transporte', email:'shiley@cled.edu.do' }
 ];
 
-// ═══════════════════ CARGAR DATOS REALES ═══════════════════
-function cargarDatosLocales() {
-    var anuncios = localStorage.getItem('CLED_ANUNCIOS'); if (anuncios) ANUNCIOS_DB = JSON.parse(anuncios);
-    var reuniones = localStorage.getItem('CLED_REUNIONES'); if (reuniones) REUNIONES_DB = JSON.parse(reuniones);
-    var asistencias = localStorage.getItem('CLED_ASISTENCIAS'); if (asistencias) ASISTENCIAS_DB = JSON.parse(asistencias);
-    var calificaciones = localStorage.getItem('CLED_CALIFICACIONES'); if (calificaciones) CALIFICACIONES_DB = JSON.parse(calificaciones);
-    var miembros = localStorage.getItem('CLED_MIEMBROS');
-    if (miembros) {
-        MIEMBROS_DB = JSON.parse(miembros);
-    } else {
-        MIEMBROS_DB = [
-            { id:'ADM001', codigo:'ADM001', nombre:'Robelin Mejías', email:'robelin@cled.edu.do', telefono:'809-555-0101', curso:'6to', club:'TODOS', estado:'Activo', fechaIngreso:'2024-10-24', rol:'Administrador', username:'ADM001', password:'admin123' },
-            { id:'PRO001', codigo:'PRO001', nombre:'Ana Ramírez', email:'ana@protocolo.edu.do', telefono:'809-555-0104', curso:'6to', club:'TODOS', estado:'Activo', fechaIngreso:'2024-10-24', rol:'PROTOCOLO', username:'PRO001', password:'pro123' }
-        ];
-        localStorage.setItem('CLED_MIEMBROS', JSON.stringify(MIEMBROS_DB));
-    }
-    console.log('📊 Datos cargados:', { miembros: MIEMBROS_DB.length, anuncios: ANUNCIOS_DB.length, reuniones: REUNIONES_DB.length, asistencias: ASISTENCIAS_DB.length, calificaciones: CALIFICACIONES_DB.length });
-}
-cargarDatosLocales();
-
-// ═══════════════════ INICIALIZACIÓN ═══════════════════
-document.addEventListener('DOMContentLoaded', function() {
-    var sesion = localStorage.getItem('CLED_SESSION');
-    var redirect = localStorage.getItem('CLED_REDIRECT');
+// ═══════════════════════════ INICIALIZACIÓN ═══════════════════════════
+document.addEventListener('DOMContentLoaded', function(){
+    var s = localStorage.getItem('CLED_SESSION');
+    var r = localStorage.getItem('CLED_REDIRECT');
     localStorage.removeItem('CLED_REDIRECT');
-    if (sesion) {
-        USUARIO = JSON.parse(sesion);
-        if (USUARIO.rol === 'PROTOCOLO') { mostrarProtocolo(); }
-        else { mostrarPanel(); }
+    if (s) {
+        USUARIO = JSON.parse(s);
+        if (USUARIO.rol === 'PROTOCOLO') mostrarProtocolo();
+        else mostrarPanel();
     } else {
         mostrarSitioPublico();
         navegarPublica('inicio');
     }
 });
 
-// ═══════════════════ CAMBIO DE MODO ═══════════════════
 function mostrarSitioPublico() {
     MODO = 'publico';
     document.getElementById('public-site').style.display = '';
-    document.getElementById('panel-app').classList.remove('active'); document.getElementById('panel-app').style.display = 'none';
-    document.getElementById('protocolo-site').classList.remove('active'); document.getElementById('protocolo-site').style.display = 'none';
-    if (USUARIO) { document.getElementById('btn-login-public').classList.add('hidden'); document.getElementById('btn-panel-public').classList.remove('hidden'); }
+    document.getElementById('panel-app').style.display = 'none';
+    document.getElementById('protocolo-site').style.display = 'none';
+    if (USUARIO) {
+        document.getElementById('btn-login-public').classList.add('hidden');
+        document.getElementById('btn-panel-public').classList.remove('hidden');
+    }
 }
+
 function mostrarPanel() {
     MODO = 'panel';
     document.getElementById('public-site').style.display = 'none';
-    document.getElementById('panel-app').classList.add('active'); document.getElementById('panel-app').style.display = 'flex';
-    document.getElementById('protocolo-site').classList.remove('active'); document.getElementById('protocolo-site').style.display = 'none';
+    document.getElementById('panel-app').style.display = 'flex';
+    document.getElementById('protocolo-site').style.display = 'none';
     document.getElementById('user-name').textContent = USUARIO.nombre;
     document.getElementById('user-role').textContent = USUARIO.rol;
     document.getElementById('user-avatar').textContent = USUARIO.nombre.charAt(0).toUpperCase();
@@ -337,27 +302,38 @@ function mostrarPanel() {
     if (USUARIO.rol === 'Administrador') cargarVistaPanel('dashboard');
     else if (USUARIO.rol === 'Facilitador') cargarVistaPanel('asistencia');
     else cargarVistaPanel('inicio');
-    if (!USUARIO.tutorialVisto) setTimeout(mostrarTutorial, 800);
 }
+
 function mostrarProtocolo() {
     MODO = 'protocolo';
     document.getElementById('public-site').style.display = 'none';
-    document.getElementById('panel-app').classList.remove('active'); document.getElementById('panel-app').style.display = 'none';
-    document.getElementById('protocolo-site').classList.add('active'); document.getElementById('protocolo-site').style.display = 'block';
+    document.getElementById('panel-app').style.display = 'none';
+    document.getElementById('protocolo-site').style.display = 'block';
     document.getElementById('proto-avatar').textContent = USUARIO.nombre.charAt(0).toUpperCase();
     document.getElementById('proto-nombre').textContent = USUARIO.nombre;
     actualizarEstadisticasProtocolo();
 }
-function irAlPanel() { if (USUARIO) { if (USUARIO.rol === 'PROTOCOLO') mostrarProtocolo(); else mostrarPanel(); } }
-function volverSitioPublico() { mostrarSitioPublico(); navegarPublica('inicio'); }
-function cerrarSesion() {
-    localStorage.removeItem('CLED_SESSION'); USUARIO = null;
-    document.getElementById('btn-login-public').classList.remove('hidden');
-    document.getElementById('btn-panel-public').classList.add('hidden');
-    mostrarSitioPublico(); navegarPublica('inicio'); toast('Sesión cerrada');
+
+function irAlPanel() {
+    if (USUARIO) {
+        if (USUARIO.rol === 'PROTOCOLO') mostrarProtocolo();
+        else mostrarPanel();
+    }
 }
 
-// ═══════════════════ WEB PÚBLICA ═══════════════════
+function volverSitioPublico() { mostrarSitioPublico(); navegarPublica('inicio'); }
+
+function cerrarSesion() {
+    localStorage.removeItem('CLED_SESSION');
+    USUARIO = null;
+    document.getElementById('btn-login-public').classList.remove('hidden');
+    document.getElementById('btn-panel-public').classList.add('hidden');
+    mostrarSitioPublico();
+    navegarPublica('inicio');
+    toast('Sesión cerrada');
+}
+
+// ═══════════════════════════ WEB PÚBLICA ═══════════════════════════
 function navegarPublica(sec) {
     var c = document.getElementById('public-content');
     if (sec === 'inicio') c.innerHTML = renderInicio();
@@ -366,52 +342,66 @@ function navegarPublica(sec) {
     else if (sec === 'clubes-eventos') c.innerHTML = renderClubesEventos();
     else if (sec === 'inscripciones') c.innerHTML = renderInscripciones();
     else if (sec === 'contacto') c.innerHTML = renderContacto();
-    window.scrollTo(0,0);
-    if (sec === 'inicio') actualizarContadorEventos();
+    window.scrollTo(0, 0);
 }
+
 function renderInicio() {
-    return '<section style="background:linear-gradient(135deg,#0F2A44,#1F4E79,#123652);color:white;border-radius:28px;padding:44px;margin-bottom:24px;"><h1 style="font-size:3rem;">CLED</h1><p style="font-size:1.1rem;">Un espacio educativo para fortalecer liderazgo, expresión y desarrollo integral.</p><div style="display:flex;gap:12px;margin-top:20px;"><button class="btn btn-info" onclick="navegarPublica(\'inscripciones\')">Inscribirme</button><button class="btn btn-ghost" style="color:white;border-color:rgba(255,255,255,0.3);" onclick="navegarPublica(\'historia\')">Conocer historia</button></div><div class="stats-strip" style="margin-top:24px;"><div class="stat-tile"><strong>128+</strong><span>Miembros totales</span></div><div class="stat-tile"><strong>5</strong><span>Clubes activos</span></div><div class="stat-tile"><strong>+87</strong><span>Miembros activos</span></div><div class="stat-tile"><strong id="stat-eventos-real">0</strong><span>Eventos próximos</span></div></div></section><div class="card-grid"><div class="public-card"><h3>🎯 Misión</h3><p>Formar líderes estudiantiles comprometidos.</p></div><div class="public-card"><h3>👥 Comunidad</h3><p>+128 estudiantes en 5 clubes.</p></div><div class="public-card"><h3>📅 Eventos</h3><p>Talleres y competencias todo el año.</p></div></div>';
+    return '<section style="background:linear-gradient(135deg,#0F2A44,#1F4E79,#123652);color:white;border-radius:28px;padding:44px;margin-bottom:24px;"><h1 style="font-size:3rem;">CLED</h1><p style="font-size:1.1rem;">Un espacio educativo para fortalecer liderazgo, expresión y desarrollo integral.</p><div style="display:flex;gap:12px;margin-top:20px;"><button class="btn btn-info" onclick="navegarPublica(\'inscripciones\')">Inscribirme</button><button class="btn btn-ghost" style="color:white;border-color:rgba(255,255,255,0.3);" onclick="navegarPublica(\'historia\')">Conocer historia</button></div><div class="stats-strip" style="margin-top:24px;"><div class="stat-tile"><strong>128+</strong><span>Miembros totales</span></div><div class="stat-tile"><strong>5</strong><span>Clubes activos</span></div><div class="stat-tile"><strong>+87</strong><span>Miembros activos</span></div><div class="stat-tile"><strong id="stat-eventos-real">0</strong><span>Eventos próximos</span></div></div></section><div class="card-grid"><div class="public-card"><h3>🎯 Nuestra Misión</h3><p>Formar líderes estudiantiles comprometidos con su desarrollo personal y el de su comunidad.</p></div><div class="public-card"><h3>👥 Comunidad</h3><p>Más de 128 estudiantes participando en 5 clubes especializados.</p></div><div class="public-card"><h3>📅 Eventos</h3><p>Talleres, competencias y actividades formativas durante todo el año.</p></div></div>';
 }
+
 function renderHistoria() {
-    return '<div class="public-card" style="padding:40px;"><h2 class="section-title">Trayectoria</h2><div class="timeline"><div class="timeline-item"><div class="timeline-date">Oct 2024</div><div><h4>Génesis</h4><p>Fundación del CLED.</p></div></div><div class="timeline-item"><div class="timeline-date">Ago 2025</div><div><h4>Expansión</h4><p>Club de Comunicación Social.</p></div></div><div class="timeline-item"><div class="timeline-date">Sep 2025</div><div><h4>Reconocimiento</h4><p>Respaldo Distrital.</p></div></div><div class="timeline-item"><div class="timeline-date">May 2026</div><div><h4>Actualidad</h4><p>Digitalización y expansión.</p></div></div></div></div>';
+    return '<div class="public-card" style="padding:40px;"><h2 class="section-title">Trayectoria e Hitos Institucionales</h2><div class="timeline"><div class="timeline-item"><div class="timeline-date">Oct 2024</div><div><h4>Génesis y Visión Fundacional</h4><p>Fundación formal del CLED.</p></div></div><div class="timeline-item"><div class="timeline-date">Ago 2025</div><div><h4>Expansión Mediática</h4><p>Integración del Club de Comunicación Social y Periodismo.</p></div></div><div class="timeline-item"><div class="timeline-date">Sep 2025</div><div><h4>Reconocimiento Distrital</h4><p>Respaldo formal del Distrito Educativo 15-01.</p></div></div><div class="timeline-item"><div class="timeline-date">May 2026</div><div><h4>Liderazgo Actual</h4><p>Digitalización y expansión de programas.</p></div></div></div></div>';
 }
+
 function renderDirectiva() {
     var cards = '';
     for (var i = 0; i < DIRECTIVA_DATA.length; i++) {
         var d = DIRECTIVA_DATA[i];
-        cards += '<article class="public-card director-card" onclick="abrirPerfilDirector('+d.id+')"><img class="director-photo" src="'+d.foto+'" onerror="this.src=\'https://ui-avatars.com/api/?name='+encodeURIComponent(d.nombre)+'&background=0F2A44&color=fff&size=400\'"><div class="director-body"><span class="director-role">'+d.cargo+'</span><h3>'+d.nombre+'</h3><p>'+d.historia.substring(0,100)+'...</p></div></article>';
+        cards += '<article class="public-card director-card" onclick="abrirPerfilDirector(' + d.id + ')"><img class="director-photo" src="' + d.foto + '" onerror="this.src=\'https://ui-avatars.com/api/?name=' + encodeURIComponent(d.nombre) + '&background=0F2A44&color=fff&size=400\'"><div class="director-body"><span class="director-role">' + d.cargo + '</span><h3>' + d.nombre + '</h3></div></article>';
     }
-    return '<div class="public-card" style="padding:28px;"><h2 class="section-title">Directiva</h2><div class="card-grid">'+cards+'</div></div>';
-}
-function renderClubesEventos() {
-    var clubes = [{n:'Debate',d:'Argumentación y oratoria',i:'🎤',c:'#E53935'},{n:'Comunicación Social',d:'Periodismo digital',i:'📰',c:'#1F4E79'},{n:'Baile',d:'Expresión corporal',i:'💃',c:'#7E57C2'},{n:'Lectura',d:'Lectura crítica',i:'📚',c:'#4CAF50'},{n:'Artes',d:'Creatividad artística',i:'🎨',c:'#F57C00'}];
-    var ch = '';
-    for (var i = 0; i < clubes.length; i++) { ch += '<div class="public-card" style="text-align:center;border-top:4px solid '+clubes[i].c+';"><div style="font-size:3rem;">'+clubes[i].i+'</div><h3>'+clubes[i].n+'</h3><p>'+clubes[i].d+'</p><button class="btn btn-primary btn-sm" onclick="navegarPublica(\'inscripciones\')">Inscribirse</button></div>'; }
-    return '<h2 class="section-title">Clubes</h2><div class="card-grid">'+ch+'</div><h2 class="section-title" style="margin-top:32px;">Próximos Eventos</h2><div class="evento-card"><div class="evento-fecha"><strong>15</strong><span>Jun</span></div><div><h4>Taller de Liderazgo</h4><p>Auditorio - 2:00 PM</p></div><button class="btn btn-info" onclick="mostrarConfirmacion(\'evt1\')">✓ Confirmar</button></div>';
-}
-function renderInscripciones() {
-    return '<div class="public-card" style="padding:28px;"><h2 class="section-title">Inscripción</h2><div class="public-form"><div class="public-form-grid">'+
-        '<div class="field"><label>Nombre(s) *</label><input id="i_nombres" class="form-control" required></div>'+
-        '<div class="field"><label>Apellido(s) *</label><input id="i_apellidos" class="form-control" required></div>'+
-        '<div class="field"><label>Fecha Nacimiento *</label><input id="i_fecha_nac" class="form-control" type="date" required></div>'+
-        '<div class="field"><label>Teléfono *</label><input id="i_telefono" class="form-control" required></div>'+
-        '<div class="field"><label>Email *</label><input id="i_email" class="form-control" type="email" required></div>'+
-        '<div class="field"><label>Grado *</label><select id="i_grado" class="form-control" onchange="toggleCampos()" required><option value="">Selecciona</option><option>3ro</option><option>4to</option><option>5to</option><option>6to</option></select></div>'+
-        '<div class="field"><label>Sección *</label><input id="i_seccion" class="form-control" required></div>'+
-        '<div class="field full" id="modulo-wrap" style="display:none;"><label>Módulo</label><select id="i_modulo" class="form-control"><option value="">Selecciona</option><option>Logística</option><option>Electrónica</option><option>Desarrollo de Apps</option></select></div>'+
-        '<div class="field full" id="pasantia-wrap" style="display:none;"><label>Pasantía</label><select id="i_pasantia" class="form-control"><option value="">Selecciona</option><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option></select></div>'+
-        '<div class="field full"><label>Club *</label><select id="i_club" class="form-control" required><option value="">Selecciona</option><option>Debate</option><option>Comunicación Social</option><option>Baile</option><option>Lectura</option><option>Artes</option></select></div>'+
-        '<div class="field full"><label>Motivo *</label><textarea id="i_motivo" class="form-control" required></textarea></div>'+
-        '<div class="field full"><label>Objetivos *</label><textarea id="i_objetivos" class="form-control" required></textarea></div>'+
-        '<div class="field full"><div class="check-line"><input type="checkbox" id="i_terminos" required><div>Acepto los <a href="#">TÉRMINOS Y CONDICIONES</a></div></div></div>'+
-        '<div class="field full"><div class="check-line"><input type="checkbox" id="i_normas" required><div>Acepto las <a href="#">NORMATIVAS Y REGLAS</a></div></div></div>'+
-        '<div class="field full"><button class="btn btn-success btn-wide" onclick="enviarInscripcion()">Enviar Inscripción</button></div></div></div></div>';
-}
-function renderContacto() {
-    return '<div class="public-card" style="padding:28px;"><h2 class="section-title">Contacto</h2><p><strong>cledpmhu@gmail.com</strong></p><div class="public-form"><div class="public-form-grid"><div class="field"><label>Nombre</label><input id="c_nombre" class="form-control"></div><div class="field"><label>Email</label><input id="c_email" class="form-control" type="email"></div><div class="field"><label>Teléfono</label><input id="c_telefono" class="form-control"></div><div class="field full"><label>Asunto</label><input id="c_asunto" class="form-control"></div><div class="field full"><label>Mensaje</label><textarea id="c_mensaje" class="form-control"></textarea></div><div class="field full"><button class="btn btn-primary btn-wide" onclick="enviarContacto()">Enviar</button></div></div></div></div>';
+    return '<div class="public-card" style="padding:28px;"><h2 class="section-title">Nuestra Directiva</h2><div class="card-grid">' + cards + '</div></div>';
 }
 
-// ═══════════════════ FUNCIONES PÚBLICAS ═══════════════════
+function renderClubesEventos() {
+    var clubes = [
+        { n: 'Debate', i: '🎤', c: '#E53935' },
+        { n: 'Comunicación Social y Periodismo', i: '📰', c: '#1F4E79' },
+        { n: 'Baile', i: '💃', c: '#7E57C2' },
+        { n: 'Lectura', i: '📚', c: '#4CAF50' },
+        { n: 'Artes', i: '🎨', c: '#F57C00' }
+    ];
+    var ch = '';
+    for (var i = 0; i < clubes.length; i++) {
+        ch += '<div class="public-card" style="text-align:center;border-top:4px solid ' + clubes[i].c + ';"><div style="font-size:3rem;">' + clubes[i].i + '</div><h3>' + clubes[i].n + '</h3><button class="btn btn-primary btn-sm" onclick="navegarPublica(\'inscripciones\')">Inscribirse</button></div>';
+    }
+    return '<h2 class="section-title">Clubes Disponibles</h2><div class="card-grid">' + ch + '</div><h2 class="section-title" style="margin-top:32px;">Próximos Eventos</h2><div class="evento-card"><div class="evento-fecha"><strong>15</strong><span>Jun</span></div><div><h4>Taller de Liderazgo Juvenil</h4><p>Auditorio Principal - 2:00 PM</p></div><button class="btn btn-info" onclick="mostrarConfirmacion(\'evt1\')">✓ Confirmar</button></div><div class="evento-card"><div class="evento-fecha"><strong>22</strong><span>Jun</span></div><div><h4>Competencia de Debate Interclubes</h4><p>Sala de Conferencias - 10:00 AM</p></div><button class="btn btn-info" onclick="mostrarConfirmacion(\'evt2\')">✓ Confirmar</button></div>';
+}
+
+function renderInscripciones() {
+    return '<div class="public-card" style="padding:28px;"><h2 class="section-title">Formulario de Inscripción</h2><p class="section-subtitle">Completa tus datos para unirte a nuestra comunidad</p><div class="public-form"><div class="public-form-grid">' +
+        '<div class="field"><label>Nombre(s) *</label><input id="i_nombres" class="form-control" required></div>' +
+        '<div class="field"><label>Apellido(s) *</label><input id="i_apellidos" class="form-control" required></div>' +
+        '<div class="field"><label>Fecha de Nacimiento *</label><input id="i_fecha_nac" class="form-control" type="date" required></div>' +
+        '<div class="field"><label>Teléfono *</label><input id="i_telefono" class="form-control" required></div>' +
+        '<div class="field"><label>Email *</label><input id="i_email" class="form-control" type="email" required></div>' +
+        '<div class="field"><label>Grado *</label><select id="i_grado" class="form-control" onchange="toggleCampos()" required><option value="">Selecciona</option><option value="3ro">3ro</option><option value="4to">4to</option><option value="5to">5to</option><option value="6to">6to</option></select></div>' +
+        '<div class="field"><label>Sección *</label><input id="i_seccion" class="form-control" placeholder="Ej: A" required></div>' +
+        '<div class="field full" id="modulo-wrap" style="display:none;"><label>Módulo</label><select id="i_modulo" class="form-control"><option value="">Selecciona</option><option>Logística y Transporte</option><option>Refrigeración</option><option>Electrónica</option><option>Electricidad</option><option>Desarrollo de Aplicaciones Informáticas</option><option>Gestión Administrativa y Tributaria</option></select></div>' +
+        '<div class="field full" id="pasantia-wrap" style="display:none;"><label>Día de Pasantía</label><select id="i_pasantia" class="form-control"><option value="">Selecciona</option><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option></select></div>' +
+        '<div class="field full"><label>Club deseado *</label><select id="i_club" class="form-control" required><option value="">Selecciona</option><option value="Debate">Debate</option><option value="Comunicación Social y Periodismo">Comunicación Social y Periodismo</option><option value="Baile">Baile</option><option value="Lectura">Lectura</option><option value="Artes">Artes</option></select></div>' +
+        '<div class="field full"><label>¿Por qué te interesa?</label><textarea id="i_motivo" class="form-control"></textarea></div>' +
+        '<div class="field full"><label>Objetivos con el club</label><textarea id="i_objetivos" class="form-control"></textarea></div>' +
+        '<div class="field full"><div class="check-line"><input type="checkbox" id="i_terminos" required><div>Acepto los <a href="#" target="_blank">TÉRMINOS Y CONDICIONES</a></div></div></div>' +
+        '<div class="field full"><div class="check-line"><input type="checkbox" id="i_normas" required><div>Acepto las <a href="#" target="_blank">NORMATIVAS Y REGLAS</a></div></div></div>' +
+        '<div class="field full"><button class="btn btn-success btn-wide" onclick="enviarInscripcion()">Enviar Inscripción</button></div>' +
+        '</div></div></div>';
+}
+
+function renderContacto() {
+    return '<div class="public-card" style="padding:28px;"><h2 class="section-title">Contacto</h2><p class="section-subtitle">Escríbenos a <strong>cledpmhu@gmail.com</strong></p><div class="public-form"><div class="public-form-grid"><div class="field"><label>Nombre completo</label><input id="c_nombre" class="form-control"></div><div class="field"><label>Email</label><input id="c_email" class="form-control" type="email"></div><div class="field"><label>Teléfono</label><input id="c_telefono" class="form-control"></div><div class="field full"><label>Asunto</label><input id="c_asunto" class="form-control"></div><div class="field full"><label>Mensaje</label><textarea id="c_mensaje" class="form-control"></textarea></div><div class="field full"><button class="btn btn-primary btn-wide" onclick="enviarContacto()">Enviar mensaje</button></div></div></div></div>';
+}
+
+// ═══════════════════════════ FUNCIONES PÚBLICAS ═══════════════════════════
 function abrirPerfilDirector(id) {
     var d = null;
     for (var i = 0; i < DIRECTIVA_DATA.length; i++) { if (DIRECTIVA_DATA[i].id === id) { d = DIRECTIVA_DATA[i]; directorActual = i; break; } }
@@ -423,335 +413,1013 @@ function abrirPerfilDirector(id) {
     document.getElementById('wiki-formacion-corto').textContent = d.formacion;
     document.getElementById('wiki-email-corto').textContent = d.email;
     document.getElementById('wiki-historia').textContent = d.historia;
-    document.getElementById('wiki-logros').innerHTML = d.logros.map(function(l){ return '<li>'+l+'</li>'; }).join('');
-    document.getElementById('modal-director').style.display = 'flex'; document.body.style.overflow = 'hidden';
+    document.getElementById('wiki-logros').innerHTML = d.logros.map(function(l) { return '<li>' + l + '</li>'; }).join('');
+    document.getElementById('modal-director').style.display = 'flex';
 }
-function navegarDirector(dir) { directorActual += dir; if (directorActual < 0) directorActual = DIRECTIVA_DATA.length - 1; if (directorActual >= DIRECTIVA_DATA.length) directorActual = 0; abrirPerfilDirector(DIRECTIVA_DATA[directorActual].id); }
-function mostrarConfirmacion(evtId) { window._eventoActual = evtId; document.getElementById('modal-evento').style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+
+function navegarDirector(dir) {
+    directorActual += dir;
+    if (directorActual < 0) directorActual = DIRECTIVA_DATA.length - 1;
+    if (directorActual >= DIRECTIVA_DATA.length) directorActual = 0;
+    abrirPerfilDirector(DIRECTIVA_DATA[directorActual].id);
+}
+
+function mostrarConfirmacion(evtId) {
+    window._eventoActual = evtId;
+    document.getElementById('modal-evento').style.display = 'flex';
+}
+
 function confirmarAsistenciaEvento() {
     var n = document.getElementById('conf-nombre').value.trim();
     var e = document.getElementById('conf-email').value.trim();
     var t = document.getElementById('conf-telefono').value.trim();
     var c = document.getElementById('conf-curso').value.trim();
     if (!n || !e || !t || !c) { toast('Completa todos los campos', 'error'); return; }
-    var codigo = ''; for (var i = 0; i < 6; i++) codigo += Math.floor(Math.random() * 10);
-    var confs = JSON.parse(localStorage.getItem('CLED_CONFIRMACIONES') || '[]');
-    confs.push({ codigo: codigo, nombre: n, email: e, telefono: t, curso: c, evento: window._eventoActual, fecha: new Date().toISOString(), checkin: false });
-    localStorage.setItem('CLED_CONFIRMACIONES', JSON.stringify(confs));
+    var codigo = '';
+    for (var i = 0; i < 6; i++) codigo += Math.floor(Math.random() * 10);
+    DB.confirmaciones.push({ codigo: codigo, nombre: n, email: e, telefono: t, curso: c, evento: window._eventoActual, fecha: new Date().toISOString(), checkin: false });
+    guardarDB('confirmaciones');
     document.getElementById('modal-evento').style.display = 'none';
     document.getElementById('codigo-generado').textContent = codigo;
-    document.getElementById('datos-confirmacion').innerHTML = '<p><strong>Nombre:</strong> '+n+'</p><p><strong>Email:</strong> '+e+'</p><p><strong>Tel:</strong> '+t+'</p><p><strong>Curso:</strong> '+c+'</p>';
-    document.getElementById('modal-codigo').style.display = 'flex'; document.body.style.overflow = 'hidden';
-    actualizarContadorEventos();
-    if (typeof API !== 'undefined') API.confirmarAsistenciaEvento({ eventoId: window._eventoActual, nombre: n, email: e, telefono: t, curso: c }).catch(function(){});
+    document.getElementById('modal-codigo').style.display = 'flex';
 }
+
 function enviarInscripcion() {
-    if (!document.getElementById('i_terminos').checked || !document.getElementById('i_normas').checked) { toast('Acepta los términos', 'error'); return; }
     var grado = document.getElementById('i_grado').value;
     var nombres = document.getElementById('i_nombres').value.trim();
     var apellidos = document.getElementById('i_apellidos').value.trim();
     var fechaNac = document.getElementById('i_fecha_nac').value;
     var email = document.getElementById('i_email').value.trim();
     var club = document.getElementById('i_club').value;
-    if (!nombres || !apellidos || !fechaNac || !email || !grado || !club) { toast('Completa todos los campos *', 'error'); return; }
+    var telefono = document.getElementById('i_telefono').value.trim();
+    var seccion = document.getElementById('i_seccion').value.trim();
+    var modulo = grado !== '3ro' ? document.getElementById('i_modulo').value : '';
+    var pasantia = grado === '6to' ? document.getElementById('i_pasantia').value : '';
+    var motivo = document.getElementById('i_motivo').value.trim();
+    var objetivos = document.getElementById('i_objetivos').value.trim();
+
+    if (!document.getElementById('i_terminos').checked || !document.getElementById('i_normas').checked) {
+        toast('❌ Debes aceptar los términos y normativas', 'error'); return;
+    }
+    if (!nombres || !apellidos || !fechaNac || !email || !grado || !club) {
+        toast('❌ Completa todos los campos obligatorios (*)', 'error'); return;
+    }
+
+    // Generar ID secuencial: ID001, ID002...
+    var nuevoId = 'ID' + String(DB.inscripciones.length + 1).padStart(3, '0');
+
+    // Generar usuario: InicialNombre + InicialApellido + DDMMAA
     var inicialNombre = nombres.charAt(0).toUpperCase();
     var primerApellido = apellidos.split(' ')[0];
     var inicialApellido = primerApellido.charAt(0).toUpperCase();
     var fechaParts = fechaNac.split('-');
     var fechaCodigo = fechaParts[2] + fechaParts[1] + fechaParts[0].substring(2);
     var username = inicialNombre + inicialApellido + fechaCodigo;
+
+    // Generar contraseña aleatoria de 8 caracteres
     var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
     var password = '';
     for (var i = 0; i < 8; i++) password += chars.charAt(Math.floor(Math.random() * chars.length));
-    var insc = { id: Date.now(), nombres: nombres, apellidos: apellidos, fechaNacimiento: fechaNac, email: email, telefono: document.getElementById('i_telefono').value.trim(), grado: grado, seccion: document.getElementById('i_seccion').value.trim(), modulo: grado!=='3ro'?document.getElementById('i_modulo').value:'', pasantia: grado==='6to'?document.getElementById('i_pasantia').value:'', club: club, motivo: document.getElementById('i_motivo').value.trim(), objetivos: document.getElementById('i_objetivos').value.trim(), estado: 'pendiente', usernameGenerado: username, passwordGenerado: password, fecha: new Date().toISOString() };
-    var inscripciones = JSON.parse(localStorage.getItem('CLED_INSCRIPCIONES') || '[]');
-    inscripciones.push(insc);
-    localStorage.setItem('CLED_INSCRIPCIONES', JSON.stringify(inscripciones));
-    alert('✅ INSCRIPCIÓN ENVIADA\n\n📌 Credenciales generadas:\n\n👤 Usuario: ' + username + '\n🔑 Contraseña: ' + password + '\n\n⚠️ Guárdalas para iniciar sesión si eres aceptado.');
-    ['i_nombres','i_apellidos','i_fecha_nac','i_email','i_telefono','i_seccion','i_modulo','i_pasantia','i_motivo','i_objetivos'].forEach(function(id){ var el=document.getElementById(id); if(el)el.value=''; });
-    document.getElementById('i_grado').value=''; document.getElementById('i_club').value='';
-    document.getElementById('i_terminos').checked=false; document.getElementById('i_normas').checked=false; toggleCampos();
-    toast('✅ Inscripción enviada. Usuario: ' + username, 'success');
-    if (typeof API !== 'undefined') API.crearInscripcion({ nombres: nombres, apellidos: apellidos, email: email, telefono: document.getElementById('i_telefono').value.trim(), fechaNacimiento: fechaNac, grado: grado, seccion: document.getElementById('i_seccion').value.trim(), modulo: grado!=='3ro'?document.getElementById('i_modulo').value:'', pasantia: grado==='6to'?document.getElementById('i_pasantia').value:'', club: club, motivo: document.getElementById('i_motivo').value.trim(), objetivos: document.getElementById('i_objetivos').value.trim(), usernameGenerado: username, passwordGenerado: password, aceptaTerminos: true, aceptaNormas: true }).catch(function(){});
-}
-function enviarContacto() {
-    var contactos = JSON.parse(localStorage.getItem('CLED_CONTACTOS') || '[]');
-    contactos.push({ nombre: document.getElementById('c_nombre').value, email: document.getElementById('c_email').value, telefono: document.getElementById('c_telefono').value, asunto: document.getElementById('c_asunto').value, mensaje: document.getElementById('c_mensaje').value, fecha: new Date().toISOString() });
-    localStorage.setItem('CLED_CONTACTOS', JSON.stringify(contactos));
-    toast('✅ Mensaje enviado', 'success');
-    ['c_nombre','c_email','c_telefono','c_asunto','c_mensaje'].forEach(function(id){ document.getElementById(id).value=''; });
-}
-function toggleCampos() { var g = document.getElementById('i_grado').value; document.getElementById('modulo-wrap').style.display = (g && g!=='3ro') ? '' : 'none'; document.getElementById('pasantia-wrap').style.display = (g==='6to') ? '' : 'none'; }
-function actualizarContadorEventos() { var c = JSON.parse(localStorage.getItem('CLED_CONFIRMACIONES') || '[]'); var el = document.getElementById('stat-eventos-real'); if (el) el.textContent = c.length; }
 
-// ═══════════════════ PANEL - SIDEBAR ═══════════════════
+    // Guardar inscripción en la base de datos
+    var inscripcion = {
+        id: nuevoId,
+        usuario: username,
+        password: password,
+        nombres: nombres,
+        apellidos: apellidos,
+        fechaNacimiento: fechaNac,
+        email: email,
+        telefono: telefono,
+        grado: grado,
+        seccion: seccion,
+        modulo: modulo,
+        pasantia: pasantia,
+        club: club,
+        motivo: motivo,
+        objetivos: objetivos,
+        estado: 'pendiente',
+        fecha: new Date().toISOString()
+    };
+
+    DB.inscripciones.push(inscripcion);
+    guardarDB('inscripciones');
+
+    // También intentar enviar a Supabase
+    if (typeof API !== 'undefined' && API.crearInscripcion) {
+        API.crearInscripcion({
+            nombres: nombres, apellidos: apellidos, email: email,
+            telefono: telefono, fechaNacimiento: fechaNac,
+            grado: grado, seccion: seccion, modulo: modulo,
+            pasantia: pasantia, club: club, motivo: motivo,
+            objetivos: objetivos,
+            usernameGenerado: username,
+            passwordGenerado: password,
+            aceptaTerminos: true, aceptaNormas: true
+        }).catch(function() {});
+    }
+
+    // Mostrar tarjeta flotante con credenciales
+    mostrarTarjetaCredenciales(username, password, nuevoId, nombres + ' ' + apellidos, club);
+
+    // Limpiar formulario
+    ['i_nombres', 'i_apellidos', 'i_fecha_nac', 'i_email', 'i_telefono', 'i_seccion', 'i_motivo', 'i_objetivos'].forEach(function(id) {
+        var el = document.getElementById(id); if (el) el.value = '';
+    });
+    document.getElementById('i_grado').value = '';
+    document.getElementById('i_club').value = '';
+    document.getElementById('i_modulo').value = '';
+    document.getElementById('i_pasantia').value = '';
+    document.getElementById('i_terminos').checked = false;
+    document.getElementById('i_normas').checked = false;
+    toggleCampos();
+
+    toast('✅ Inscripción enviada correctamente', 'success');
+}
+
+function mostrarTarjetaCredenciales(usuario, password, id, nombreCompleto, club) {
+    // Eliminar tarjeta anterior si existe
+    var anterior = document.getElementById('floating-card-credentials');
+    if (anterior) anterior.remove();
+
+    var overlay = document.createElement('div');
+    overlay.className = 'floating-card-overlay';
+    overlay.id = 'floating-card-credentials';
+    overlay.innerHTML = '<div class="floating-card">' +
+        '<div class="icon-success">✅</div>' +
+        '<h3>¡Inscripción Exitosa!</h3>' +
+        '<p style="color:var(--text-muted);margin-bottom:12px;">' + nombreCompleto + ' · ' + club + '</p>' +
+        '<div class="credenciales">' +
+        '<p><strong>🆔 Usuario:</strong> <span style="font-family:monospace;font-size:1.1rem;">' + usuario + '</span></p>' +
+        '<p><strong>🔑 Contraseña:</strong> <span style="font-family:monospace;font-size:1.1rem;">' + password + '</span></p>' +
+        '<p><strong>📋 ID de Inscripción:</strong> ' + id + '</p>' +
+        '</div>' +
+        '<div style="background:#FFF8E1;border:2px dashed #F57C00;padding:12px;border-radius:8px;margin:12px 0;color:#E65100;font-weight:600;">' +
+        '📸 ¡TOMA CAPTURA DE PANTALLA!<br><small>Necesitarás estos datos para iniciar sesión si eres aceptado.</small></div>' +
+        '<button class="btn btn-primary btn-wide" onclick="document.getElementById(\'floating-card-credentials\').remove()">Entendido ✓</button>' +
+        '</div>';
+
+    document.body.appendChild(overlay);
+
+    // Cerrar al hacer clic fuera
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) overlay.remove();
+    });
+}
+
+function enviarContacto() {
+    var datos = {
+        nombre: document.getElementById('c_nombre').value.trim(),
+        email: document.getElementById('c_email').value.trim(),
+        telefono: document.getElementById('c_telefono').value.trim(),
+        asunto: document.getElementById('c_asunto').value.trim(),
+        mensaje: document.getElementById('c_mensaje').value.trim(),
+        fecha: new Date().toISOString()
+    };
+    if (!datos.nombre || !datos.email || !datos.asunto || !datos.mensaje) {
+        toast('❌ Completa todos los campos', 'error'); return;
+    }
+    DB.contactos.push(datos);
+    guardarDB('contactos');
+    toast('✅ Mensaje enviado correctamente', 'success');
+    ['c_nombre', 'c_email', 'c_telefono', 'c_asunto', 'c_mensaje'].forEach(function(id) { document.getElementById(id).value = ''; });
+}
+
+function toggleCampos() {
+    var g = document.getElementById('i_grado').value;
+    document.getElementById('modulo-wrap').style.display = (g && g !== '3ro') ? '' : 'none';
+    document.getElementById('pasantia-wrap').style.display = (g === '6to') ? '' : 'none';
+}
+
+// ═══════════════════════════ PANEL - SIDEBAR ═══════════════════════════
 function renderizarSidebar() {
-    var nav = document.getElementById('sidebar-nav'); var h = '';
+    var nav = document.getElementById('sidebar-nav');
+    var h = '';
+
     if (USUARIO.rol === 'Administrador') {
-        h = '<div class="nav-section-label">VISIÓN GLOBAL</div><button class="nav-btn active" onclick="cargarVistaPanel(\'dashboard\',this)">🌎 Dashboard</button><button class="nav-btn" onclick="cargarVistaPanel(\'miembros\',this)">👥 Miembros</button><button class="nav-btn" onclick="cargarVistaPanel(\'inscripciones\',this)">📋 Inscripciones</button><div class="nav-section-label">GESTIÓN</div><button class="nav-btn" onclick="cargarVistaPanel(\'anuncios\',this)">📢 Anuncios</button><button class="nav-btn" onclick="cargarVistaPanel(\'reuniones\',this)">📅 Reuniones</button><button class="nav-btn" onclick="cargarVistaPanel(\'calificaciones\',this)">📊 Calificaciones</button>';
+        h = '<div class="nav-section-label">VISIÓN GLOBAL</div>' +
+            '<button class="nav-btn active" onclick="cargarVistaPanel(\'dashboard\',this)">🌎 Dashboard</button>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'miembros\',this)">👥 Miembros</button>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'inscripciones\',this)">📋 Inscripciones</button>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'consultas\',this)">🔍 Consultas</button>' +
+            '<div class="nav-section-label">GESTIÓN</div>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'anuncios\',this)">📢 Anuncios</button>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'reuniones\',this)">📅 Reuniones</button>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'calificaciones\',this)">📊 Calificaciones</button>';
     } else if (USUARIO.rol === 'Facilitador') {
-        h = '<div class="nav-section-label">MI CLUB</div><button class="nav-btn active" onclick="cargarVistaPanel(\'asistencia\',this)">✅ Pasar Lista</button><button class="nav-btn" onclick="cargarVistaPanel(\'calificaciones\',this)">📝 Notas</button><button class="nav-btn" onclick="cargarVistaPanel(\'miembros\',this)">👥 Miembros</button><div class="nav-section-label">GESTIÓN</div><button class="nav-btn" onclick="cargarVistaPanel(\'anuncios\',this)">📢 Anuncios</button><button class="nav-btn" onclick="cargarVistaPanel(\'reuniones\',this)">📅 Reuniones</button><button class="nav-btn" onclick="cargarVistaPanel(\'inscripciones\',this)">📋 Inscripciones</button>';
+        h = '<div class="nav-section-label">MI CLUB: ' + USUARIO.club + '</div>' +
+            '<button class="nav-btn active" onclick="cargarVistaPanel(\'asistencia\',this)">✅ Pasar Lista</button>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'calificaciones\',this)">📝 Publicar Notas</button>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'miembros\',this)">👥 Miembros de ' + USUARIO.club + '</button>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'consultas\',this)">🔍 Consultas</button>' +
+            '<div class="nav-section-label">GESTIÓN</div>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'anuncios\',this)">📢 Anuncios</button>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'reuniones\',this)">📅 Reuniones</button>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'inscripciones\',this)">📋 Inscripciones</button>';
     } else {
-        h = '<div class="nav-section-label">MI ESPACIO</div><button class="nav-btn active" onclick="cargarVistaPanel(\'inicio\',this)">🏠 Inicio</button><button class="nav-btn" onclick="cargarVistaPanel(\'anuncios\',this)">📢 Anuncios</button><div class="nav-section-label">ACADÉMICO</div><button class="nav-btn" onclick="cargarVistaPanel(\'calificaciones\',this)">📊 Mis Notas</button><button class="nav-btn" onclick="cargarVistaPanel(\'asistencia\',this)">📝 Mi Asistencia</button>';
+        h = '<div class="nav-section-label">MI ESPACIO</div>' +
+            '<button class="nav-btn active" onclick="cargarVistaPanel(\'inicio\',this)">🏠 Inicio</button>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'anuncios\',this)">📢 Anuncios</button>' +
+            '<div class="nav-section-label">ACADÉMICO</div>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'calificaciones\',this)">📊 Mis Calificaciones</button>' +
+            '<button class="nav-btn" onclick="cargarVistaPanel(\'asistencia\',this)">📝 Mi Asistencia</button>';
     }
     nav.innerHTML = h;
 }
 
-// ═══════════════════ PANEL - VISTAS ═══════════════════
+// ═══════════════════════════ PANEL - CARGAR VISTAS ═══════════════════════════
 function cargarVistaPanel(vista, btnEl) {
-    document.getElementById('view-title').textContent = vista.charAt(0).toUpperCase() + vista.slice(1);
-    document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.getElementById('view-title').textContent = obtenerTituloVista(vista);
+    document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
     if (btnEl) btnEl.classList.add('active');
     var area = document.getElementById('content-area');
-    if (vista === 'dashboard') area.innerHTML = renderDashboard();
-    else if (vista === 'miembros') area.innerHTML = renderMiembrosPanel();
-    else if (vista === 'inscripciones') area.innerHTML = renderInscripcionesPanel();
-    else if (vista === 'anuncios') area.innerHTML = renderAnunciosPanel();
-    else if (vista === 'reuniones') area.innerHTML = renderReunionesPanel();
-    else if (vista === 'calificaciones') area.innerHTML = renderCalificacionesPanel();
-    else if (vista === 'asistencia') area.innerHTML = renderAsistenciaPanel();
-    else if (vista === 'inicio') area.innerHTML = renderInicioPanel();
+
+    switch (vista) {
+        case 'dashboard': area.innerHTML = renderDashboard(); break;
+        case 'miembros': area.innerHTML = renderMiembros(); break;
+        case 'inscripciones': area.innerHTML = renderInscripcionesPanel(); break;
+        case 'consultas': area.innerHTML = renderConsultas(); break;
+        case 'anuncios': area.innerHTML = renderAnuncios(); break;
+        case 'reuniones': area.innerHTML = renderReuniones(); break;
+        case 'calificaciones': area.innerHTML = renderCalificaciones(); break;
+        case 'asistencia': area.innerHTML = renderAsistencia(); break;
+        case 'inicio': area.innerHTML = renderInicioPanel(); break;
+    }
 }
 
+function obtenerTituloVista(vista) {
+    var titulos = {
+        'dashboard': 'Dashboard',
+        'miembros': 'Miembros',
+        'inscripciones': 'Inscripciones',
+        'consultas': 'Consultas',
+        'anuncios': 'Anuncios',
+        'reuniones': 'Reuniones',
+        'calificaciones': 'Calificaciones',
+        'asistencia': 'Asistencia',
+        'inicio': 'Mi Panel'
+    };
+    return titulos[vista] || vista;
+}
+
+// ═══════════════ DASHBOARD ═══════════════
 function renderDashboard() {
-    var total = MIEMBROS_DB.length;
-    var activos = MIEMBROS_DB.filter(function(m){ return m.estado==='Activo'; }).length;
-    var inscPend = JSON.parse(localStorage.getItem('CLED_INSCRIPCIONES')||'[]').filter(function(i){ return i.estado==='pendiente'; }).length;
-    return '<h2>Dashboard</h2><div class="grid-3"><div class="stat-card"><div class="label">Total</div><div class="value">'+total+'</div></div><div class="stat-card" style="border-left-color:var(--success);"><div class="label">Activos</div><div class="value">'+activos+'</div></div><div class="stat-card" style="border-left-color:var(--warning);"><div class="label">Pendientes</div><div class="value">'+inscPend+'</div></div></div>';
+    var miembros = DB.miembros;
+    var inscripciones = DB.inscripciones;
+    var reuniones = DB.reuniones;
+    var total = miembros.length;
+    var activos = miembros.filter(function(m) { return m.estado === 'Activo'; }).length;
+    var inactivos = miembros.filter(function(m) { return m.estado === 'Inactivo'; }).length;
+    var aceptados = inscripciones.filter(function(i) { return i.estado === 'aceptado'; }).length;
+    var rechazados = inscripciones.filter(function(i) { return i.estado === 'rechazado'; }).length;
+    var pendientes = inscripciones.filter(function(i) { return i.estado === 'pendiente'; }).length;
+    var lideres = miembros.filter(function(m) { return m.rol === 'Facilitador' || m.rol === 'Administrador'; }).length;
+    var reunionesCount = reuniones.length;
+
+    var notasHTML = '';
+    for (var i = 0; i < DB.notas.length; i++) {
+        var n = DB.notas[i];
+        var clase = n.estado === 'completada' ? 'completada' : (n.estado === 'pospuesta' ? 'pospuesta' : '');
+        notasHTML += '<div class="nota-item ' + clase + '">' +
+            '<span class="nota-texto">' + n.texto + '</span>' +
+            '<small style="color:var(--text-muted);">' + n.fecha + '</small>' +
+            (n.estado !== 'completada' ? '<button class="btn btn-sm btn-success" onclick="toggleNota(' + i + ',\'completada\')" title="Completar">✓</button>' : '') +
+            (n.estado !== 'pospuesta' ? '<button class="btn btn-sm btn-warning" onclick="toggleNota(' + i + ',\'pospuesta\')" title="Posponer">⏳</button>' : '') +
+            '<button class="btn btn-sm btn-danger" onclick="eliminarNota(' + i + ')" title="Eliminar">🗑️</button></div>';
+    }
+
+    return '<h2>Dashboard General</h2>' +
+        '<div class="grid-4" style="margin-bottom:20px;">' +
+        '<div class="stat-card"><div class="label">Total Miembros</div><div class="value">' + total + '</div></div>' +
+        '<div class="stat-card" style="border-left-color:var(--success);"><div class="label">Activos</div><div class="value">' + activos + '</div></div>' +
+        '<div class="stat-card" style="border-left-color:var(--danger);"><div class="label">Inactivos</div><div class="value">' + inactivos + '</div></div>' +
+        '<div class="stat-card" style="border-left-color:var(--accent);"><div class="label">Líderes</div><div class="value">' + lideres + '</div></div>' +
+        '<div class="stat-card" style="border-left-color:var(--info);"><div class="label">Inscripciones</div><div class="value">' + inscripciones.length + '</div></div>' +
+        '<div class="stat-card" style="border-left-color:var(--success);"><div class="label">Aceptados</div><div class="value">' + aceptados + '</div></div>' +
+        '<div class="stat-card" style="border-left-color:var(--danger);"><div class="label">Rechazados</div><div class="value">' + rechazados + '</div></div>' +
+        '<div class="stat-card" style="border-left-color:var(--warning);"><div class="label">Pendientes</div><div class="value">' + pendientes + '</div></div>' +
+        '<div class="stat-card" style="border-left-color:var(--primary);"><div class="label">Reuniones</div><div class="value">' + reunionesCount + '</div></div></div>' +
+        '<div class="grid-2">' +
+        '<div class="card"><h3>📝 Notas Personales</h3>' +
+        '<div style="display:flex;gap:8px;margin-bottom:12px;"><input id="nueva-nota" class="form-control" placeholder="Nueva nota..."><button class="btn btn-primary btn-sm" onclick="agregarNota()">➕</button></div>' +
+        notasHTML + '</div>' +
+        '<div class="card"><h3>📊 Resumen Rápido</h3>' +
+        '<p>Miembros totales: <strong>' + total + '</strong></p>' +
+        '<p>Inscripciones pendientes: <strong>' + pendientes + '</strong></p>' +
+        '<p>Reuniones agendadas: <strong>' + reunionesCount + '</strong></p>' +
+        '<p>Líderes activos: <strong>' + lideres + '</strong></p></div></div>';
 }
 
-function renderMiembrosPanel() {
-    var miembros = MIEMBROS_DB;
-    if (USUARIO.rol === 'Facilitador') miembros = miembros.filter(function(m){ return m.club === USUARIO.club; });
+function agregarNota() {
+    var texto = document.getElementById('nueva-nota').value.trim();
+    if (!texto) return;
+    DB.notas.push({ texto: texto, estado: 'pendiente', fecha: new Date().toLocaleDateString() });
+    guardarDB('notas');
+    cargarVistaPanel('dashboard');
+}
+
+function toggleNota(i, estado) {
+    DB.notas[i].estado = estado;
+    guardarDB('notas');
+    cargarVistaPanel('dashboard');
+}
+
+function eliminarNota(i) {
+    DB.notas.splice(i, 1);
+    guardarDB('notas');
+    cargarVistaPanel('dashboard');
+}
+
+// ═══════════════ MIEMBROS ═══════════════
+function renderMiembros() {
+    var miembros = DB.miembros;
+    // FAC solo ve miembros de su club
+    if (USUARIO.rol === 'Facilitador') {
+        miembros = miembros.filter(function(m) { return m.club === USUARIO.club; });
+    }
+
+    var clubes = ['Todos', 'Debate', 'Comunicación Social y Periodismo', 'Baile', 'Lectura', 'Artes'];
+    var cursos = ['Todos', '3ro', '4to', '5to', '6to'];
+    var estados = ['Todos', 'Activo', 'Inactivo', 'Suspendido', 'Egresado'];
+
+    var clubOpts = '', cursoOpts = '', estadoOpts = '';
+    for (var i = 0; i < clubes.length; i++) clubOpts += '<option value="' + clubes[i] + '">' + clubes[i] + '</option>';
+    for (var i = 0; i < cursos.length; i++) cursoOpts += '<option value="' + cursos[i] + '">' + cursos[i] + '</option>';
+    for (var i = 0; i < estados.length; i++) estadoOpts += '<option value="' + estados[i] + '">' + estados[i] + '</option>';
+
     var filas = '';
     for (var i = 0; i < miembros.length; i++) {
         var m = miembros[i];
-        filas += '<tr><td><strong>'+m.nombre+'</strong><br><small>'+m.email+'</small></td><td>'+m.club+'</td><td>'+m.curso+'</td><td><span class="badge '+(m.estado==='Activo'?'badge-success':'badge-warning')+'">'+m.estado+'</span></td><td><button class="btn btn-sm btn-info" onclick="verFicha(\''+m.id+'\')">📋</button> '+(USUARIO.rol==='Administrador'?'<button class="btn btn-sm btn-warning" onclick="cambiarEstadoMiembro(\''+m.id+'\')">🔄</button>':'')+'</td></tr>';
+        filas += '<tr data-club="' + m.club + '" data-curso="' + m.grado + '" data-estado="' + m.estado + '">' +
+            '<td><strong>' + m.nombre + '</strong><br><small>' + m.email + '</small></td>' +
+            '<td>' + (m.club || '—') + '</td>' +
+            '<td>' + (m.grado || '—') + '</td>' +
+            '<td><span class="badge ' + (m.estado === 'Activo' ? 'badge-success' : m.estado === 'Inactivo' ? 'badge-warning' : 'badge-danger') + '">' + m.estado + '</span></td>' +
+            '<td>' + (m.rol || 'Participante') + '</td>' +
+            '<td>' +
+            '<button class="btn btn-sm btn-info" onclick="verFicha(\'' + m.id + '\')">📋 Ficha</button> ' +
+            (USUARIO.rol === 'Administrador' ? '<button class="btn btn-sm btn-warning" onclick="cambiarEstadoMiembro(\'' + m.id + '\',\'' + m.estado + '\')">🔄 Estado</button>' : '') +
+            '</td></tr>';
     }
-    return '<div class="card"><h3>Miembros ('+miembros.length+')</h3><input class="form-control" placeholder="🔍 Buscar..." oninput="filtrarTabla(this.value,\'tabla-miembros\')" style="margin-bottom:12px;"><div class="table-wrap"><table class="web-table" id="tabla-miembros"><thead><tr><th>Nombre</th><th>Club</th><th>Curso</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>'+filas+'</tbody></table></div></div>';
+
+    return '<div class="card"><h3>Miembros (' + miembros.length + ')</h3>' +
+        '<div class="grid-3" style="margin-bottom:12px;">' +
+        '<div class="form-group"><label>Filtrar por Club</label><select class="form-control" onchange="filtrarMiembros()" id="filtro-club">' + clubOpts + '</select></div>' +
+        '<div class="form-group"><label>Filtrar por Curso</label><select class="form-control" onchange="filtrarMiembros()" id="filtro-curso">' + cursoOpts + '</select></div>' +
+        '<div class="form-group"><label>Filtrar por Estado</label><select class="form-control" onchange="filtrarMiembros()" id="filtro-estado">' + estadoOpts + '</select></div></div>' +
+        '<input class="form-control" placeholder="🔍 Buscar por nombre..." oninput="filtrarTabla(this.value,\'tabla-miembros\')" style="margin-bottom:12px;">' +
+        '<div class="table-wrap"><table class="web-table" id="tabla-miembros"><thead><tr><th>Nombre</th><th>Club</th><th>Curso</th><th>Estado</th><th>Rol</th><th>Acciones</th></tr></thead><tbody>' + (filas || '<tr><td class="empty" colspan="6">No hay miembros registrados</td></tr>') + '</tbody></table></div></div>';
 }
-function verFicha(id) {
-    var m = null;
-    for (var i = 0; i < MIEMBROS_DB.length; i++) { if (MIEMBROS_DB[i].id === id) { m = MIEMBROS_DB[i]; break; } }
-    if (!m) return;
-    var asistencias = ASISTENCIAS_DB.filter(function(a){ return a.miembroId === id; });
-    var total = asistencias.length, presentes = asistencias.filter(function(a){ return a.estado==='Presente'; }).length;
-    var pct = total ? Math.round((presentes/total)*100) : 0;
-    alert('FICHA\n━━━━━━\nNombre: '+m.nombre+'\nEmail: '+m.email+'\nClub: '+m.club+'\nEstado: '+m.estado+'\nAsistencia: '+pct+'%');
-}
-function cambiarEstadoMiembro(id) {
-    var estados = ['Activo','Inactivo','Suspendido','Egresado'];
-    var nuevo = prompt('Nuevo estado: '+estados.join(', '));
-    if (nuevo && estados.indexOf(nuevo) !== -1) {
-        for (var i = 0; i < MIEMBROS_DB.length; i++) { if (MIEMBROS_DB[i].id === id) { MIEMBROS_DB[i].estado = nuevo; break; } }
-        localStorage.setItem('CLED_MIEMBROS', JSON.stringify(MIEMBROS_DB));
-        toast('✅ Estado: '+nuevo, 'success'); cargarVistaPanel('miembros');
-        if (typeof API !== 'undefined') API.cambiarEstadoMiembro(id, nuevo).catch(function(){});
+
+function filtrarMiembros() {
+    var club = document.getElementById('filtro-club')?.value || 'Todos';
+    var curso = document.getElementById('filtro-curso')?.value || 'Todos';
+    var estado = document.getElementById('filtro-estado')?.value || 'Todos';
+    var filas = document.querySelectorAll('#tabla-miembros tbody tr');
+    for (var i = 0; i < filas.length; i++) {
+        var f = filas[i];
+        var c = f.getAttribute('data-club'), g = f.getAttribute('data-curso'), e = f.getAttribute('data-estado');
+        f.style.display = ((club === 'Todos' || c === club) && (curso === 'Todos' || g === curso) && (estado === 'Todos' || e === estado)) ? '' : 'none';
     }
 }
 
-function renderInscripcionesPanel() {
-    var ins = JSON.parse(localStorage.getItem('CLED_INSCRIPCIONES') || '[]');
-    if (USUARIO.rol === 'Facilitador') ins = ins.filter(function(i){ return i.club === USUARIO.club; });
-    var filas = '';
-    for (var i = 0; i < ins.length; i++) {
-        var item = ins[i];
-        filas += '<tr><td><strong>'+item.nombres+' '+item.apellidos+'</strong><br><small>'+item.email+'</small></td><td>'+item.club+'</td><td>'+item.grado+'</td><td>'+new Date(item.fecha).toLocaleDateString()+'</td><td><span class="badge '+(item.estado==='pendiente'?'badge-warning':item.estado==='aceptado'?'badge-success':'badge-danger')+'">'+item.estado+'</span></td><td>'+(item.usernameGenerado?'<small>👤 '+item.usernameGenerado+'</small>':'—')+'</td><td>'+(item.estado==='pendiente'?'<button class="btn btn-sm btn-success" onclick="gestionarInscripcion('+item.id+',\'aceptar\')">✓</button> <button class="btn btn-sm btn-danger" onclick="gestionarInscripcion('+item.id+',\'rechazar\')">✗</button>':'—')+'</td></tr>';
-    }
-    return '<div class="card"><h3>Inscripciones ('+ins.length+')</h3><div class="table-wrap"><table class="web-table"><thead><tr><th>Estudiante</th><th>Club</th><th>Grado</th><th>Fecha</th><th>Estado</th><th>Usuario</th><th>Acciones</th></tr></thead><tbody>'+(filas||'<tr><td class="empty" colspan="7">Sin inscripciones</td></tr>')+'</tbody></table></div></div>';
+function verFicha(id) {
+    var m = null;
+    for (var i = 0; i < DB.miembros.length; i++) { if (DB.miembros[i].id === id) { m = DB.miembros[i]; break; } }
+    if (!m) return;
+    var asistencias = DB.asistencias.filter(function(a) { return a.miembroId === id; });
+    var total = asistencias.length;
+    var presentes = asistencias.filter(function(a) { return a.estado === 'Presente'; }).length;
+    var pct = total ? Math.round((presentes / total) * 100) : 0;
+    var califs = DB.calificaciones.filter(function(c) { return c.miembroId === id; });
+    var prom = califs.length ? Math.round(califs.reduce(function(s, c) { return s + c.nota; }, 0) / califs.length) : 0;
+
+    alert('📋 FICHA DE MIEMBRO\n━━━━━━━━━━━━━━━━━━\n' +
+        'Nombre: ' + m.nombre + '\n' +
+        'ID: ' + m.id + '\n' +
+        'Email: ' + m.email + '\n' +
+        'Teléfono: ' + (m.telefono || '—') + '\n' +
+        'Club: ' + m.club + '\n' +
+        'Curso: ' + (m.grado || '—') + '\n' +
+        'Estado: ' + m.estado + '\n' +
+        'Rol: ' + (m.rol || 'Participante') + '\n' +
+        'Fecha Ingreso: ' + (m.fechaIngreso || '—') + '\n' +
+        '━━━━━━━━━━━━━━━━━━\n' +
+        '📊 Asistencia: ' + pct + '% (' + presentes + '/' + total + ')\n' +
+        '📊 Promedio: ' + (prom || '—'));
 }
+
+function cambiarEstadoMiembro(id, estadoActual) {
+    var estados = ['Activo', 'Inactivo', 'Suspendido', 'Egresado'];
+    var nuevo = prompt('Cambiar estado (actual: ' + estadoActual + ')\n\nOpciones: ' + estados.join(', '));
+    if (nuevo && estados.indexOf(nuevo) !== -1) {
+        for (var i = 0; i < DB.miembros.length; i++) {
+            if (DB.miembros[i].id === id) { DB.miembros[i].estado = nuevo; break; }
+        }
+        guardarDB('miembros');
+        toast('✅ Estado actualizado a ' + nuevo, 'success');
+        cargarVistaPanel('miembros');
+    }
+}
+
+// ═══════════════ INSCRIPCIONES PANEL ═══════════════
+function renderInscripcionesPanel() {
+    var inscripciones = DB.inscripciones;
+    // FAC solo ve inscripciones de su club
+    if (USUARIO.rol === 'Facilitador') {
+        inscripciones = inscripciones.filter(function(i) { return i.club === USUARIO.club; });
+    }
+
+    var filas = '';
+    for (var i = 0; i < inscripciones.length; i++) {
+        var item = inscripciones[i];
+        var badge = item.estado === 'pendiente' ? 'badge-warning' : item.estado === 'aceptado' ? 'badge-success' : 'badge-danger';
+        var acciones = '';
+        if (item.estado === 'pendiente') {
+            acciones = '<button class="btn btn-sm btn-success" onclick="gestionarInscripcion(\'' + item.id + '\',\'aceptar\')">✓ Aceptar</button> ' +
+                       '<button class="btn btn-sm btn-danger" onclick="gestionarInscripcion(\'' + item.id + '\',\'rechazar\')">✗ Rechazar</button>';
+        } else if (item.estado === 'rechazado' && USUARIO.rol === 'Administrador') {
+            acciones = '<button class="btn btn-sm btn-warning" onclick="gestionarInscripcion(\'' + item.id + '\',\'revertir\')">🔄 Revertir a Pendiente</button>';
+        } else if (item.estado === 'aceptado' && USUARIO.rol === 'Administrador') {
+            acciones = '<button class="btn btn-sm btn-danger" onclick="gestionarInscripcion(\'' + item.id + '\',\'rechazar\')">✗ Rechazar</button>';
+        }
+        filas += '<tr>' +
+            '<td><strong>' + item.nombres + ' ' + item.apellidos + '</strong><br><small>' + item.email + '</small></td>' +
+            '<td>' + item.club + '</td>' +
+            '<td>' + item.grado + '</td>' +
+            '<td>' + new Date(item.fecha).toLocaleDateString() + '</td>' +
+            '<td><span class="badge ' + badge + '">' + item.estado + '</span></td>' +
+            '<td><small style="font-family:monospace;">' + item.id + '</small></td>' +
+            '<td><small style="font-family:monospace;">' + (item.usuario || '—') + '</small></td>' +
+            '<td>' + acciones + '</td></tr>';
+    }
+
+    return '<div class="card"><h3>📋 Inscripciones (' + inscripciones.length + ')</h3>' +
+        '<div class="table-wrap"><table class="web-table"><thead><tr>' +
+        '<th>Estudiante</th><th>Club</th><th>Grado</th><th>Fecha</th><th>Estado</th><th>ID</th><th>Usuario</th><th>Acciones</th>' +
+        '</tr></thead><tbody>' + (filas || '<tr><td class="empty" colspan="8">No hay inscripciones</td></tr>') + '</tbody></table></div></div>';
+}
+
 function gestionarInscripcion(id, accion) {
-    var inscripciones = JSON.parse(localStorage.getItem('CLED_INSCRIPCIONES') || '[]');
     var insc = null;
-    for (var i = 0; i < inscripciones.length; i++) { if (inscripciones[i].id === id) { insc = inscripciones[i]; break; } }
+    for (var i = 0; i < DB.inscripciones.length; i++) { if (DB.inscripciones[i].id === id) { insc = DB.inscripciones[i]; break; } }
     if (!insc) return;
+
     if (accion === 'aceptar') {
         insc.estado = 'aceptado';
-        localStorage.setItem('CLED_INSCRIPCIONES', JSON.stringify(inscripciones));
-        var miembros = JSON.parse(localStorage.getItem('CLED_MIEMBROS') || '[]');
-        var nuevoId = 'EST' + String(miembros.length + 1).padStart(3, '0');
-        var nuevoMiembro = { id: nuevoId, codigo: nuevoId, username: insc.usernameGenerado, password: insc.passwordGenerado, nombre: insc.nombres+' '+insc.apellidos, nombres: insc.nombres, apellidos: insc.apellidos, email: insc.email, telefono: insc.telefono||'', fechaNacimiento: insc.fechaNacimiento||'', grado: insc.grado||'', seccion: insc.seccion||'', modulo: insc.modulo||'', club: insc.club, estado: 'Activo', rol: 'Participante', fechaIngreso: new Date().toISOString().split('T')[0], tutorialVisto: false, terminosAceptados: true };
-        miembros.push(nuevoMiembro);
-        localStorage.setItem('CLED_MIEMBROS', JSON.stringify(miembros));
-        MIEMBROS_DB = miembros;
-        alert('✅ ACEPTADO\n\n👤 Usuario: '+insc.usernameGenerado+'\n🔑 Contraseña: '+insc.passwordGenerado+'\n📧 Email: '+insc.email);
-        toast('✅ Miembro creado: '+insc.usernameGenerado, 'success');
-        if (typeof API !== 'undefined') { API.gestionarInscripcion(id, 'aceptar', { revisadoPor: USUARIO.id }).catch(function(){}); API.crearMiembro({ codigo: nuevoId, username: insc.usernameGenerado, password: insc.passwordGenerado, nombres: insc.nombres, apellidos: insc.apellidos, email: insc.email, telefono: insc.telefono||'', fechaNacimiento: insc.fechaNacimiento||'', grado: insc.grado||'', seccion: insc.seccion||'', modulo: insc.modulo||'', club: insc.club }).catch(function(){}); }
-    } else {
+        guardarDB('inscripciones');
+        // Crear miembro en la base de datos
+        var nuevoMiembro = {
+            id: insc.id,
+            codigo: insc.id,
+            username: insc.usuario,
+            password: insc.password,
+            nombre: insc.nombres + ' ' + insc.apellidos,
+            nombres: insc.nombres,
+            apellidos: insc.apellidos,
+            email: insc.email,
+            telefono: insc.telefono || '',
+            fechaNacimiento: insc.fechaNacimiento || '',
+            grado: insc.grado || '',
+            seccion: insc.seccion || '',
+            modulo: insc.modulo || '',
+            club: insc.club,
+            estado: 'Activo',
+            rol: 'Participante',
+            fechaIngreso: new Date().toISOString().split('T')[0],
+            tutorialVisto: false,
+            terminosAceptados: true
+        };
+        DB.miembros.push(nuevoMiembro);
+        guardarDB('miembros');
+        // Mostrar credenciales en tarjeta flotante
+        mostrarTarjetaCredenciales(insc.usuario, insc.password, insc.id, insc.nombres + ' ' + insc.apellidos, insc.club);
+        toast('✅ Inscripción aceptada - Miembro creado', 'success');
+        // Intentar API
+        if (typeof API !== 'undefined' && API.crearMiembro) {
+            API.crearMiembro({
+                codigo: insc.id, username: insc.usuario, password: insc.password,
+                nombres: insc.nombres, apellidos: insc.apellidos, email: insc.email,
+                telefono: insc.telefono || '', fechaNacimiento: insc.fechaNacimiento || '',
+                grado: insc.grado || '', seccion: insc.seccion || '', modulo: insc.modulo || '',
+                club: insc.club, estado: 'Activo', rol: 'Participante'
+            }).catch(function() {});
+        }
+    } else if (accion === 'rechazar') {
         insc.estado = 'rechazado';
-        localStorage.setItem('CLED_INSCRIPCIONES', JSON.stringify(inscripciones));
-        toast('❌ Rechazada', 'info');
-        if (typeof API !== 'undefined') API.gestionarInscripcion(id, 'rechazar', { revisadoPor: USUARIO.id }).catch(function(){});
+        guardarDB('inscripciones');
+        toast('❌ Inscripción rechazada', 'info');
+    } else if (accion === 'revertir' && USUARIO.rol === 'Administrador') {
+        insc.estado = 'pendiente';
+        guardarDB('inscripciones');
+        toast('🔄 Revertida a pendiente', 'success');
     }
     cargarVistaPanel('inscripciones');
 }
 
-function renderAnunciosPanel() {
-    var puede = (USUARIO.rol==='Administrador'||USUARIO.rol==='Facilitador');
-    var ah = '';
-    for (var i = ANUNCIOS_DB.length-1; i >= 0; i--) { var a = ANUNCIOS_DB[i]; ah += '<div class="anuncio-card"><h4>'+a.titulo+'</h4><div class="meta">'+a.autor+' · '+new Date(a.fecha).toLocaleDateString()+' · '+(a.global?'🌍 Global':'🏷️ '+a.club)+'</div><p>'+a.contenido+'</p></div>'; }
-    var fh = puede ? '<div class="card"><h3>📢 Publicar</h3><div class="form-group"><label>Título</label><input id="an-titulo" class="form-control"></div><div class="form-group"><label>Contenido</label><textarea id="an-contenido" class="form-control" rows="3"></textarea></div><div class="form-group"><label>Audiencia</label><select id="an-audiencia" class="form-control"><option value="club">Mi Club ('+USUARIO.club+')</option>'+(USUARIO.rol==='Administrador'?'<option value="TODOS">🌟 Todos los Clubes</option>':'')+'</select>'+(USUARIO.rol==='Facilitador'?'<p style="font-size:0.75rem;color:var(--text-muted);">⚠ Solo puedes publicar en tu club</p>':'')+'</div><button class="btn btn-primary" onclick="publicarAnuncio()">📢 Publicar</button></div>' : '';
-    return fh + '<div class="card"><h3>Anuncios</h3>'+(ah||'<p style="color:var(--text-muted);">No hay anuncios</p>')+'</div>';
+// ═══════════════ CONSULTAS ═══════════════
+function renderConsultas() {
+    var esAdmin = (USUARIO.rol === 'Administrador');
+    var miembros = DB.miembros;
+    if (!esAdmin) {
+        miembros = miembros.filter(function(m) { return m.club === USUARIO.club; });
+    }
+    var califs = DB.calificaciones;
+    var asistencias = DB.asistencias;
+
+    // Agrupar calificaciones por miembro
+    var resumen = [];
+    for (var i = 0; i < miembros.length; i++) {
+        var m = miembros[i];
+        var misCalifs = califs.filter(function(c) { return c.miembroId === m.id; });
+        var misAsist = asistencias.filter(function(a) { return a.miembroId === m.id; });
+        var totalAsist = misAsist.length;
+        var presentes = misAsist.filter(function(a) { return a.estado === 'Presente'; }).length;
+        var pctAsist = totalAsist ? Math.round((presentes / totalAsist) * 100) : 0;
+        var prom = misCalifs.length ? Math.round(misCalifs.reduce(function(s, c) { return s + c.nota; }, 0) / misCalifs.length) : 0;
+        resumen.push({ nombre: m.nombre, club: m.club, curso: m.grado || '—', estado: m.estado, asistencia: pctAsist, promedio: prom, totalNotas: misCalifs.length });
+    }
+
+    var filas = '';
+    for (var i = 0; i < resumen.length; i++) {
+        var r = resumen[i];
+        var riesgo = r.asistencia < 65 ? '⚠ Riesgo' : r.asistencia < 75 ? '⚠ Atención' : '✅';
+        filas += '<tr>' +
+            '<td><strong>' + r.nombre + '</strong></td>' +
+            '<td>' + r.club + '</td>' +
+            '<td>' + r.curso + '</td>' +
+            '<td>' + r.asistencia + '% ' + riesgo + '</td>' +
+            '<td>' + (r.prom || '—') + '</td>' +
+            '<td>' + r.totalNotas + '</td>' +
+            '<td><span class="badge ' + (r.estado === 'Activo' ? 'badge-success' : 'badge-warning') + '">' + r.estado + '</span></td></tr>';
+    }
+
+    return '<div class="card"><h3>🔍 Consulta de Calificaciones y Asistencia' + (esAdmin ? ' (Todos los clubes)' : ' (' + USUARIO.club + ')') + '</h3>' +
+        '<div class="grid-2" style="margin-bottom:12px;">' +
+        '<div class="form-group"><label>Filtrar por Club</label><select class="form-control" id="consulta-club" onchange="filtrarConsultas()"><option value="Todos">Todos</option><option>Debate</option><option>Comunicación Social y Periodismo</option><option>Baile</option><option>Lectura</option><option>Artes</option></select></div>' +
+        '<div class="form-group"><label>Filtrar por Curso</label><select class="form-control" id="consulta-curso" onchange="filtrarConsultas()"><option value="Todos">Todos</option><option>3ro</option><option>4to</option><option>5to</option><option>6to</option></select></div></div>' +
+        '<div class="table-wrap"><table class="web-table" id="tabla-consultas"><thead><tr><th>Nombre</th><th>Club</th><th>Curso</th><th>Asistencia</th><th>Promedio</th><th>Notas</th><th>Estado</th></tr></thead><tbody>' + (filas || '<tr><td class="empty" colspan="7">Sin datos</td></tr>') + '</tbody></table></div></div>';
 }
+
+function filtrarConsultas() {
+    var club = document.getElementById('consulta-club')?.value || 'Todos';
+    var curso = document.getElementById('consulta-curso')?.value || 'Todos';
+    var filas = document.querySelectorAll('#tabla-consultas tbody tr');
+    for (var i = 0; i < filas.length; i++) {
+        var f = filas[i];
+        var celdas = f.getElementsByTagName('td');
+        if (celdas.length < 2) continue;
+        var c = celdas[1].textContent.trim();
+        var g = celdas[2].textContent.trim();
+        f.style.display = ((club === 'Todos' || c === club) && (curso === 'Todos' || g === curso)) ? '' : 'none';
+    }
+}
+
+// ═══════════════ ANUNCIOS ═══════════════
+function renderAnuncios() {
+    var anuncios = DB.anuncios;
+    var ah = '';
+    for (var i = anuncios.length - 1; i >= 0; i--) {
+        var a = anuncios[i];
+        ah += '<div class="anuncio-card"><h4>' + a.titulo + '</h4><div class="meta">' + a.autor + ' · ' + new Date(a.fecha).toLocaleDateString() + ' · ' + (a.global ? '🌍 Global' : '🏷️ ' + a.club) + '</div><p>' + a.contenido + '</p></div>';
+    }
+    var puede = (USUARIO.rol === 'Administrador' || USUARIO.rol === 'Facilitador');
+    var fh = puede ? '<div class="card"><h3>📢 Publicar Anuncio</h3>' +
+        '<div class="form-group"><label>Título</label><input id="an-titulo" class="form-control"></div>' +
+        '<div class="form-group"><label>Contenido</label><textarea id="an-contenido" class="form-control" rows="3"></textarea></div>' +
+        '<div class="form-group"><label>Audiencia</label><select id="an-audiencia" class="form-control"><option value="club">Mi Club (' + USUARIO.club + ')</option>' +
+        (USUARIO.rol === 'Administrador' ? '<option value="TODOS">🌟 Todos los Clubes</option>' : '') +
+        '</select>' + (USUARIO.rol === 'Facilitador' ? '<p style="font-size:0.75rem;color:var(--text-muted);">⚠ Solo puedes publicar en tu club</p>' : '') + '</div>' +
+        '<button class="btn btn-primary" onclick="publicarAnuncio()">📢 Publicar</button></div>' : '';
+    return fh + '<div class="card"><h3>📋 Anuncios</h3>' + (ah || '<p style="color:var(--text-muted);">No hay anuncios publicados</p>') + '</div>';
+}
+
 function publicarAnuncio() {
     var t = document.getElementById('an-titulo').value.trim();
     var c = document.getElementById('an-contenido').value.trim();
     var aud = document.getElementById('an-audiencia').value;
-    if (!t||!c) { toast('Completa los campos', 'error'); return; }
-    if (aud==='TODOS' && USUARIO.rol!=='Administrador') { toast('❌ Solo ADM puede publicar anuncios globales', 'error'); return; }
-    var global = (USUARIO.rol==='Administrador' && aud==='TODOS');
-    var clubDestino = global ? 'TODOS' : USUARIO.club;
-    ANUNCIOS_DB.push({ id: Date.now(), titulo: t, contenido: c, autor: USUARIO.nombre, club: clubDestino, global: global, fecha: new Date().toISOString() });
-    localStorage.setItem('CLED_ANUNCIOS', JSON.stringify(ANUNCIOS_DB));
-    toast('✅ Publicado', 'success'); cargarVistaPanel('anuncios');
-    if (typeof API !== 'undefined') API.publicarAnuncio({ titulo: t, contenido: c, esGlobal: global, club: clubDestino, autorId: USUARIO.id, autorNombre: USUARIO.nombre }).catch(function(){});
+    if (!t || !c) { toast('❌ Completa los campos', 'error'); return; }
+    if (aud === 'TODOS' && USUARIO.rol !== 'Administrador') { toast('❌ Solo el Administrador puede publicar anuncios globales', 'error'); return; }
+    var global = (USUARIO.rol === 'Administrador' && aud === 'TODOS');
+    DB.anuncios.push({ id: Date.now(), titulo: t, contenido: c, autor: USUARIO.nombre, club: global ? 'TODOS' : USUARIO.club, global: global, fecha: new Date().toISOString() });
+    guardarDB('anuncios');
+    toast('✅ Anuncio publicado', 'success');
+    cargarVistaPanel('anuncios');
 }
 
-function renderReunionesPanel() {
-    var esAdmin = (USUARIO.rol==='Administrador');
+// ═══════════════ REUNIONES ═══════════════
+function renderReuniones() {
+    var reuniones = DB.reuniones;
+    var esAdmin = (USUARIO.rol === 'Administrador');
     var fh = '<div class="card"><h3>📅 Agendar Reunión</h3>';
     if (esAdmin) {
-        fh += '<div class="form-group"><label>Tipo</label><select id="reunion-tipo" class="form-control" onchange="toggleReunionTipo()"><option value="club">Mi Club</option><option value="global">🌟 Global</option></select></div><div class="form-group" id="reunion-club-wrap"><label>Club</label><select id="reunion-club" class="form-control"><option value="">Todos</option><option>Debate</option><option>Artes</option><option>Lectura</option><option>Baile</option><option>Comunicación Social</option></select></div>';
+        fh += '<div class="form-group"><label>Tipo de Reunión</label><select id="reunion-tipo" class="form-control" onchange="toggleReunionTipo()"><option value="club">📌 Miembros de un Club</option><option value="global">🌍 Todos los Líderes (Global)</option><option value="personal">👤 Persona Específica</option></select></div>';
+        fh += '<div class="form-group" id="club-wrap"><label>Club</label><select id="reunion-club" class="form-control"><option value="">Selecciona</option><option>Debate</option><option>Comunicación Social y Periodismo</option><option>Baile</option><option>Lectura</option><option>Artes</option></select></div>';
+        fh += '<div class="form-group" id="persona-wrap" style="display:none;"><label>Persona</label><select id="reunion-persona" class="form-control"><option value="">Cargando...</option></select></div>';
     } else {
-        fh += '<div class="alert alert-info">📌 Solo puedes agendar reuniones para <strong>'+USUARIO.club+'</strong></div><input type="hidden" id="reunion-tipo" value="club">';
+        fh += '<div class="alert alert-info">📌 Como Facilitador, solo puedes agendar reuniones para <strong>' + USUARIO.club + '</strong></div><input type="hidden" id="reunion-tipo" value="club">';
     }
-    fh += '<div class="form-group"><label>Título</label><input id="reunion-titulo" class="form-control"></div><div class="grid-2"><div class="form-group"><label>Fecha</label><input id="reunion-fecha" class="form-control" type="date"></div><div class="form-group"><label>Hora</label><input id="reunion-hora" class="form-control" type="time"></div></div><div class="form-group"><label>Objetivo</label><textarea id="reunion-objetivo" class="form-control" rows="2"></textarea></div><div class="form-group"><label>Link</label><input id="reunion-link" class="form-control" placeholder="https://meet.google.com/..."></div><button class="btn btn-success" onclick="agendarReunion()">📅 Agendar</button></div>';
+    fh += '<div class="form-group"><label>Título *</label><input id="reunion-titulo" class="form-control"></div>';
+    fh += '<div class="grid-2"><div class="form-group"><label>Fecha *</label><input id="reunion-fecha" class="form-control" type="date"></div><div class="form-group"><label>Hora *</label><input id="reunion-hora" class="form-control" type="time"></div></div>';
+    fh += '<div class="form-group"><label>Link *</label><input id="reunion-link" class="form-control" placeholder="https://meet.google.com/..."></div>';
+    fh += '<div class="form-group"><label>Objetivo (opcional)</label><textarea id="reunion-objetivo" class="form-control" rows="2"></textarea></div>';
+    fh += '<button class="btn btn-success" onclick="agendarReunion()">📅 Agendar Reunión</button></div>';
+
     var rh = '';
-    var reuniones = REUNIONES_DB;
-    if (!esAdmin) reuniones = reuniones.filter(function(r){ return r.global || r.club===USUARIO.club; });
-    for (var i = 0; i < reuniones.length; i++) { var r = reuniones[i]; rh += '<div class="anuncio-card" style="border-left-color:'+(r.global?'var(--accent)':'var(--info)')+';"><h4>'+r.titulo+'</h4><div class="meta">📅 '+r.fecha+' · 🕐 '+r.hora+' · '+(r.global?'🌍 Global':'🏷️ '+r.club)+'</div>'+(r.objetivo?'<p>🎯 '+r.objetivo+'</p>':'')+'<a href="'+r.link+'" target="_blank" class="btn btn-sm btn-info">🔗 Unirse</a></div>'; }
-    return fh + '<div class="card"><h3>Reuniones</h3>'+(rh||'<p style="color:var(--text-muted);">No hay reuniones</p>')+'</div>';
+    for (var i = 0; i < reuniones.length; i++) {
+        var r = reuniones[i];
+        var tipoIcono = r.tipo === 'global' ? '🌍' : r.tipo === 'personal' ? '👤' : '🏷️';
+        var tipoTexto = r.tipo === 'global' ? 'Global (Todos los líderes)' : r.tipo === 'personal' ? 'Persona: ' + (r.personaNombre || 'Específica') : 'Club: ' + (r.club || '—');
+        rh += '<div class="anuncio-card" style="border-left-color:' + (r.tipo === 'global' ? 'var(--accent)' : r.tipo === 'personal' ? 'var(--warning)' : 'var(--info)') + ';">' +
+            '<h4>' + tipoIcono + ' ' + r.titulo + '</h4>' +
+            '<div class="meta">📅 ' + r.fecha + ' · 🕐 ' + r.hora + ' · ' + tipoTexto + ' · Por: ' + (r.creador || '—') + '</div>' +
+            (r.objetivo ? '<p style="margin:8px 0;">🎯 <strong>Objetivo:</strong> ' + r.objetivo + '</p>' : '') +
+            '<a href="' + r.link + '" target="_blank" class="btn btn-sm btn-info" style="margin-top:8px;">🔗 Unirse</a></div>';
+    }
+
+    if (esAdmin) setTimeout(cargarPersonasReunion, 300);
+    return fh + '<div class="card"><h3>📅 Reuniones Programadas</h3>' + (rh || '<p style="color:var(--text-muted);">No hay reuniones programadas</p>') + '</div>';
 }
-function toggleReunionTipo() { var tipo = document.getElementById('reunion-tipo')?.value; var wrap = document.getElementById('reunion-club-wrap'); if (wrap) wrap.style.display = (tipo==='global')?'':'none'; }
+
+function toggleReunionTipo() {
+    var tipo = document.getElementById('reunion-tipo')?.value || 'club';
+    var clubWrap = document.getElementById('club-wrap');
+    var personaWrap = document.getElementById('persona-wrap');
+    if (clubWrap) clubWrap.style.display = (tipo === 'club') ? '' : 'none';
+    if (personaWrap) personaWrap.style.display = (tipo === 'personal') ? '' : 'none';
+    if (tipo === 'personal') cargarPersonasReunion();
+}
+
+function cargarPersonasReunion() {
+    var select = document.getElementById('reunion-persona');
+    if (!select) return;
+    select.innerHTML = '<option value="">Cargando...</option>';
+    var personas = [];
+    if (typeof API !== 'undefined' && API.getMiembros) {
+        API.getMiembros({}).then(function(r) {
+            if (r.success && r.data) {
+                personas = r.data.filter(function(p) { return p.rol === 'Administrador' || p.rol === 'Facilitador' || p.rol === 'Protocolo'; });
+                llenarSelectPersonas(select, personas);
+            }
+        }).catch(function() {
+            personas = DB.miembros.filter(function(p) { return p.rol === 'Administrador' || p.rol === 'Facilitador' || p.rol === 'Protocolo'; });
+            llenarSelectPersonas(select, personas);
+        });
+    } else {
+        personas = DB.miembros.filter(function(p) { return p.rol === 'Administrador' || p.rol === 'Facilitador' || p.rol === 'Protocolo'; });
+        llenarSelectPersonas(select, personas);
+    }
+}
+
+function llenarSelectPersonas(select, personas) {
+    select.innerHTML = '<option value="">Selecciona una persona</option>';
+    for (var i = 0; i < personas.length; i++) {
+        var p = personas[i];
+        var nombre = p.nombres ? (p.nombres + ' ' + p.apellidos) : p.nombre;
+        select.innerHTML += '<option value="' + p.id + '">' + nombre + ' (' + p.rol + ')</option>';
+    }
+}
+
 function agendarReunion() {
-    var esAdmin = (USUARIO.rol==='Administrador');
-    var tipo = esAdmin ? (document.getElementById('reunion-tipo')?.value||'club') : 'club';
+    var esAdmin = (USUARIO.rol === 'Administrador');
+    var tipo = esAdmin ? (document.getElementById('reunion-tipo')?.value || 'club') : 'club';
     var titulo = document.getElementById('reunion-titulo').value.trim();
     var fecha = document.getElementById('reunion-fecha').value;
     var hora = document.getElementById('reunion-hora').value;
     var link = document.getElementById('reunion-link').value.trim();
-    if (!titulo||!fecha||!hora||!link) { toast('Completa campos obligatorios', 'error'); return; }
-    var global = (esAdmin && tipo==='global');
-    var clubDestino = global ? (document.getElementById('reunion-club')?.value||'TODOS') : USUARIO.club;
-    if (!esAdmin && clubDestino !== USUARIO.club) { toast('❌ Solo puedes agendar reuniones para tu club: '+USUARIO.club, 'error'); return; }
-    REUNIONES_DB.push({ id: Date.now(), titulo: titulo, fecha: fecha, hora: hora, objetivo: document.getElementById('reunion-objetivo').value, link: link, club: clubDestino, global: global, creador: USUARIO.nombre });
-    localStorage.setItem('CLED_REUNIONES', JSON.stringify(REUNIONES_DB));
-    toast('✅ Reunión agendada', 'success'); cargarVistaPanel('reuniones');
-    if (typeof API !== 'undefined') API.crearReunion({ titulo: titulo, tipo: tipo, fecha: fecha, hora: hora, objetivo: document.getElementById('reunion-objetivo').value, link: link, esGlobal: global, club: clubDestino, organizadorId: USUARIO.id, organizadorNombre: USUARIO.nombre }).catch(function(){});
+    var objetivo = document.getElementById('reunion-objetivo').value.trim();
+
+    if (!titulo || !fecha || !hora || !link) { toast('❌ Completa todos los campos obligatorios (*)', 'error'); return; }
+
+    var clubDestino = USUARIO.club;
+    var global = false;
+    var personaId = null;
+    var personaNombre = '';
+
+    if (esAdmin) {
+        if (tipo === 'global') { global = true; clubDestino = 'TODOS'; }
+        else if (tipo === 'personal') {
+            var sel = document.getElementById('reunion-persona');
+            personaId = sel?.value;
+            personaNombre = sel?.options[sel?.selectedIndex]?.text || '';
+            if (!personaId) { toast('❌ Selecciona una persona', 'error'); return; }
+            clubDestino = 'PERSONAL';
+        }
+    }
+
+    DB.reuniones.push({
+        id: Date.now(), titulo: titulo, tipo: tipo, fecha: fecha, hora: hora,
+        objetivo: objetivo, link: link, club: clubDestino, global: global,
+        personaId: personaId, personaNombre: personaNombre, creador: USUARIO.nombre
+    });
+    guardarDB('reuniones');
+    toast('✅ Reunión agendada exitosamente', 'success');
+    cargarVistaPanel('reuniones');
 }
 
-function renderCalificacionesPanel() {
-    if (USUARIO.rol==='Facilitador') {
-        var miembros = MIEMBROS_DB.filter(function(m){ return m.club===USUARIO.club && m.rol==='Participante'; });
+// ═══════════════ CALIFICACIONES ═══════════════
+function renderCalificaciones() {
+    if (USUARIO.rol === 'Facilitador') {
+        var miembros = DB.miembros.filter(function(m) { return m.club === USUARIO.club && (m.rol === 'Participante' || !m.rol); });
         var filas = '';
-        for (var i = 0; i < miembros.length; i++) { filas += '<tr><td>'+miembros[i].nombre+'</td><td><input class="form-control" id="nota_'+i+'" type="number" min="0" max="100" style="width:80px;"></td><td><input class="form-control" id="obs_'+i+'" placeholder="Opcional"></td></tr>'; }
-        return '<div class="card"><h3>📝 Publicar Notas</h3><div class="grid-2"><div class="form-group"><label>Módulo</label><input id="calif-modulo" class="form-control"></div><div class="form-group"><label>Actividad</label><input id="calif-actividad" class="form-control"></div></div><div class="table-wrap"><table class="web-table"><thead><tr><th>Estudiante</th><th>Nota</th><th>Obs.</th></tr></thead><tbody>'+filas+'</tbody></table></div><button class="btn btn-success" onclick="publicarNotas()">💾 Publicar</button><div class="card" style="margin-top:16px;"><label><input type="checkbox" id="calif-visible" checked onchange="toggleVisibilidadCalif()"> Visibles para estudiantes</label></div></div>';
+        for (var i = 0; i < miembros.length; i++) {
+            var m = miembros[i];
+            filas += '<tr><td>' + m.nombre + '</td><td>' + (m.grado || '—') + '</td>' +
+                '<td><input class="form-control" id="nota_' + i + '" type="number" min="0" max="100" style="width:80px;"></td>' +
+                '<td><input class="form-control" id="obs_' + i + '" placeholder="Opcional"></td></tr>';
+        }
+        return '<div class="card"><h3>📝 Publicar Calificaciones - ' + USUARIO.club + '</h3>' +
+            '<div class="grid-2"><div class="form-group"><label>Módulo</label><input id="calif-modulo" class="form-control"></div>' +
+            '<div class="form-group"><label>Actividad</label><input id="calif-actividad" class="form-control"></div></div>' +
+            '<div class="table-wrap"><table class="web-table"><thead><tr><th>Estudiante</th><th>Curso</th><th>Nota (0-100)</th><th>Observación</th></tr></thead><tbody>' + filas + '</tbody></table></div>' +
+            '<button class="btn btn-success" onclick="publicarNotas()" style="margin-top:16px;">💾 Publicar Calificaciones</button>' +
+            '<div class="card" style="margin-top:16px;"><h3>🔒 Control de Visibilidad</h3>' +
+            '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="calif-visible" checked onchange="toggleVisibilidadCalif()"> Calificaciones visibles para estudiantes</label>' +
+            '<button class="btn btn-sm btn-info" style="margin-top:8px;" onclick="gestionarVisibilidadIndividual()">Gestionar Visibilidad Individual</button></div></div>';
+    } else if (USUARIO.rol === 'Administrador') {
+        var miembros = DB.miembros;
+        var califs = DB.calificaciones;
+        return '<div class="card"><h3>📊 Gestión de Calificaciones (Todos los clubes)</h3>' +
+            '<p>Total calificaciones registradas: <strong>' + califs.length + '</strong></p>' +
+            '<p>Total miembros: <strong>' + miembros.length + '</strong></p>' +
+            '<div class="card" style="margin-top:16px;"><h3>🔓 Permisos de Boletín PDF</h3>' +
+            '<p style="font-size:0.85rem;color:var(--text-muted);">Concede o revoca permisos para que los estudiantes puedan generar su boletín de calificaciones en PDF.</p>' +
+            '<button class="btn btn-info btn-sm" onclick="gestionarPermisosBoletin()">Gestionar Permisos de Boletín</button>' +
+            '<div style="margin-top:8px;font-size:0.8rem;color:var(--text-muted);">Permisos activos: <strong>' + Object.keys(DB.boletinPermisos).filter(function(k) { return DB.boletinPermisos[k]; }).length + '</strong> estudiantes</div></div></div>';
     } else {
-        var mis = CALIFICACIONES_DB.filter(function(c){ return c.miembroId===USUARIO.id; });
+        var misCalifs = DB.calificaciones.filter(function(c) { return c.miembroId === USUARIO.id; });
         var filas = '';
-        for (var i = 0; i < mis.length; i++) { var n = mis[i]; filas += '<tr><td>'+n.modulo+'</td><td>'+n.actividad+'</td><td><strong style="color:'+(n.nota>=90?'var(--success)':n.nota>=70?'var(--warning)':'var(--danger)')+';">'+n.nota+'</strong></td><td>'+(n.observacion||'—')+'</td></tr>'; }
-        return '<div class="card"><h3>📊 Mis Calificaciones</h3><div class="table-wrap"><table class="web-table"><thead><tr><th>Módulo</th><th>Actividad</th><th>Nota</th><th>Obs.</th></tr></thead><tbody>'+(filas||'<tr><td class="empty" colspan="4">Sin calificaciones</td></tr>')+'</tbody></table></div></div>';
+        var modulos = {};
+        for (var i = 0; i < misCalifs.length; i++) {
+            var n = misCalifs[i];
+            if (!modulos[n.modulo]) modulos[n.modulo] = [];
+            modulos[n.modulo].push(n);
+            filas += '<tr><td>' + n.modulo + '</td><td>' + n.actividad + '</td>' +
+                '<td><strong style="color:' + (n.nota >= 90 ? 'var(--success)' : n.nota >= 70 ? 'var(--warning)' : 'var(--danger)') + ';">' + n.nota + '</strong></td>' +
+                '<td>' + (n.observacion || '—') + '</td></tr>';
+        }
+        var permiso = DB.boletinPermisos[USUARIO.id] || false;
+        var btnBoletin = permiso ?
+            '<button class="btn btn-info" onclick="generarBoletinPDF()">📄 Generar Boletín PDF</button>' :
+            '<div class="alert alert-warning">🔒 El boletín PDF no está disponible. Solicita permiso a un Administrador.</div>';
+
+        var resumenModulos = '';
+        for (var mod in modulos) {
+            var notasMod = modulos[mod];
+            var suma = notasMod.reduce(function(s, n) { return s + n.nota; }, 0);
+            resumenModulos += '<p><strong>' + mod + ':</strong> ' + suma + ' pts (' + notasMod.length + ' actividades)</p>';
+        }
+
+        return '<div class="card"><h3>📊 Mis Calificaciones</h3>' + btnBoletin +
+            (resumenModulos ? '<div class="card" style="margin-top:12px;"><h4>Resumen por Módulo</h4>' + resumenModulos + '</div>' : '') +
+            '<div class="table-wrap" style="margin-top:12px;"><table class="web-table"><thead><tr><th>Módulo</th><th>Actividad</th><th>Nota</th><th>Obs.</th></tr></thead><tbody>' +
+            (filas || '<tr><td class="empty" colspan="4">No tienes calificaciones registradas</td></tr>') + '</tbody></table></div></div>';
     }
 }
+
 function publicarNotas() {
     var modulo = document.getElementById('calif-modulo').value.trim();
     var actividad = document.getElementById('calif-actividad').value.trim();
-    if (!modulo||!actividad) { toast('Completa módulo y actividad', 'error'); return; }
-    var miembros = MIEMBROS_DB.filter(function(m){ return m.club===USUARIO.club && m.rol==='Participante'; });
+    if (!modulo || !actividad) { toast('❌ Completa módulo y actividad', 'error'); return; }
+    var miembros = DB.miembros.filter(function(m) { return m.club === USUARIO.club && (m.rol === 'Participante' || !m.rol); });
     var count = 0;
     for (var i = 0; i < miembros.length; i++) {
-        var notaEl = document.getElementById('nota_'+i);
-        if (notaEl && notaEl.value) { CALIFICACIONES_DB.push({ id: Date.now()+i, miembroId: miembros[i].id, modulo: modulo, actividad: actividad, nota: parseInt(notaEl.value), observacion: document.getElementById('obs_'+i)?.value||'', fecha: new Date().toISOString() }); count++; }
+        var notaEl = document.getElementById('nota_' + i);
+        if (notaEl && notaEl.value) {
+            DB.calificaciones.push({
+                id: Date.now() + i, miembroId: miembros[i].id, modulo: modulo,
+                actividad: actividad, nota: parseInt(notaEl.value),
+                observacion: document.getElementById('obs_' + i)?.value || '',
+                fecha: new Date().toISOString(), publicadoPor: USUARIO.nombre
+            });
+            count++;
+        }
     }
-    localStorage.setItem('CLED_CALIFICACIONES', JSON.stringify(CALIFICACIONES_DB));
-    toast('✅ '+count+' notas publicadas', 'success'); cargarVistaPanel('calificaciones');
-    if (typeof API !== 'undefined' && count > 0) API.publicarCalificaciones(CALIFICACIONES_DB.slice(-count)).catch(function(){});
+    guardarDB('calificaciones');
+    toast('✅ ' + count + ' calificaciones publicadas', 'success');
+    cargarVistaPanel('calificaciones');
 }
-function toggleVisibilidadCalif() { var v = document.getElementById('calif-visible').checked; localStorage.setItem('CLED_CALIF_VISIBLE', v); toast('Visibilidad '+(v?'activada':'desactivada')); if (typeof API !== 'undefined') API.toggleVisibilidadCalificaciones(v); }
 
-function renderAsistenciaPanel() {
-    if (USUARIO.rol==='Facilitador') {
-        var miembros = MIEMBROS_DB.filter(function(m){ return m.club===USUARIO.club && m.rol==='Participante'; });
-        var items = ''; var hoy = new Date().toISOString().split('T')[0];
-        for (var i = 0; i < miembros.length; i++) { items += '<div class="asistencia-item"><div><strong>'+miembros[i].nombre+'</strong></div><div class="radio-group"><input type="radio" name="asist_'+i+'" id="p_'+i+'" value="Presente" checked><label for="p_'+i+'" class="presente">✓ Presente</label><input type="radio" name="asist_'+i+'" id="t_'+i+'" value="Tardanza"><label for="t_'+i+'" class="tardanza">⚠ Tardanza</label><input type="radio" name="asist_'+i+'" id="a_'+i+'" value="Ausente"><label for="a_'+i+'" class="ausente">✗ Ausente</label></div></div>'; }
-        return '<div class="card"><h3>✅ Pasar Lista - '+USUARIO.club+'</h3><div class="grid-2"><div class="form-group"><label>Módulo</label><input id="asist-modulo" class="form-control"></div><div class="form-group"><label>Fecha</label><input id="asist-fecha" class="form-control" type="date" value="'+hoy+'"></div></div>'+items+'<button class="btn btn-success" onclick="guardarAsistencia()" style="margin-top:16px;">💾 Guardar</button></div>';
-    } else {
-        var mis = ASISTENCIAS_DB.filter(function(a){ return a.miembroId===USUARIO.id; });
-        var total = mis.length, presentes = mis.filter(function(a){ return a.estado==='Presente'; }).length;
-        var pct = total ? Math.round((presentes/total)*100) : 0;
-        var filas = '';
-        for (var i = mis.length-1; i >= 0; i--) { var a = mis[i]; filas += '<tr><td>'+new Date(a.fecha).toLocaleDateString()+'</td><td>'+(a.modulo||'—')+'</td><td><span class="badge '+(a.estado==='Presente'?'badge-success':a.estado==='Tardanza'?'badge-warning':'badge-danger')+'">'+a.estado+'</span></td></tr>'; }
-        return '<div class="grid-3"><div class="stat-card"><div class="label">Asistencia</div><div class="value">'+pct+'%</div></div><div class="stat-card" style="border-left-color:var(--danger);"><div class="label">Ausencias</div><div class="value">'+(total-presentes)+'</div></div><div class="stat-card"><div class="label">Total</div><div class="value">'+total+'</div></div></div><div class="card"><h3>Historial</h3><div class="table-wrap"><table class="web-table"><thead><tr><th>Fecha</th><th>Módulo</th><th>Estado</th></tr></thead><tbody>'+(filas||'<tr><td class="empty" colspan="3">Sin registros</td></tr>')+'</tbody></table></div></div>';
+function toggleVisibilidadCalif() {
+    var v = document.getElementById('calif-visible').checked;
+    localStorage.setItem('CLED_CALIF_VISIBLE', v ? 'true' : 'false');
+    toast('Calificaciones ' + (v ? 'visibles' : 'ocultas') + ' para estudiantes', 'success');
+}
+
+function gestionarVisibilidadIndividual() {
+    var califs = DB.calificaciones;
+    if (califs.length === 0) { toast('No hay calificaciones para gestionar', 'info'); return; }
+    var lista = 'Calificaciones:\n\n';
+    for (var i = 0; i < califs.length; i++) {
+        var c = califs[i];
+        lista += (i + 1) + '. ' + c.modulo + ' - ' + c.actividad + ' (' + c.nota + 'pts) - Visible: ' + (c.visible !== false ? '✅' : '❌') + '\n';
+    }
+    var idx = prompt(lista + '\nNúmero de calificación para cambiar visibilidad:');
+    if (idx && califs[parseInt(idx) - 1]) {
+        califs[parseInt(idx) - 1].visible = califs[parseInt(idx) - 1].visible === false ? true : false;
+        guardarDB('calificaciones');
+        toast('✅ Visibilidad actualizada', 'success');
     }
 }
+
+function gestionarPermisosBoletin() {
+    var miembros = DB.miembros.filter(function(m) { return m.rol === 'Participante' || !m.rol; });
+    var lista = 'Estudiantes:\n\n';
+    for (var i = 0; i < miembros.length; i++) {
+        var m = miembros[i];
+        lista += (i + 1) + '. ' + m.nombre + ' (' + m.id + ') - Boletín: ' + (DB.boletinPermisos[m.id] ? '✅ Permitido' : '❌ Denegado') + '\n';
+    }
+    var id = prompt(lista + '\n\nIngresa el ID del estudiante para cambiar su permiso:');
+    if (id) {
+        DB.boletinPermisos[id] = !DB.boletinPermisos[id];
+        guardarDB('boletinPermisos');
+        toast('Permiso ' + (DB.boletinPermisos[id] ? '✅ concedido' : '❌ revocado'), 'success');
+        cargarVistaPanel('calificaciones');
+    }
+}
+
+function generarBoletinPDF() {
+    var califs = DB.calificaciones.filter(function(c) { return c.miembroId === USUARIO.id; });
+    if (!califs.length) { toast('❌ No tienes calificaciones', 'error'); return; }
+    var modulos = {};
+    for (var i = 0; i < califs.length; i++) { var m = califs[i].modulo; if (!modulos[m]) modulos[m] = []; modulos[m].push(califs[i]); }
+    try {
+        var { jsPDF } = window.jspdf;
+        var doc = new jsPDF();
+        doc.setFontSize(18);
+        doc.text('CLED - Boletín de Calificaciones', 20, 20);
+        doc.setFontSize(12);
+        doc.text('Estudiante: ' + USUARIO.nombre, 20, 32);
+        doc.text('Club: ' + USUARIO.club, 20, 40);
+        doc.text('Fecha: ' + new Date().toLocaleDateString(), 20, 48);
+        var y = 60;
+        for (var mod in modulos) {
+            doc.setFontSize(14);
+            doc.text('Módulo: ' + mod, 20, y);
+            y += 8;
+            var notas = modulos[mod];
+            var suma = 0;
+            for (var i = 0; i < notas.length; i++) {
+                doc.setFontSize(11);
+                doc.text('  - ' + notas[i].actividad + ': ' + notas[i].nota + ' pts', 22, y);
+                suma += notas[i].nota;
+                y += 7;
+            }
+            doc.setFontSize(12);
+            doc.text('  Total módulo: ' + suma + ' pts', 22, y);
+            y += 10;
+        }
+        doc.save('Boletin_' + USUARIO.nombre.replace(/\s/g, '_') + '.pdf');
+        toast('✅ Boletín generado correctamente', 'success');
+    } catch (e) {
+        toast('❌ Error al generar PDF: ' + e.message, 'error');
+    }
+}
+
+// ═══════════════ ASISTENCIA ═══════════════
+function renderAsistencia() {
+    if (USUARIO.rol === 'Facilitador') {
+        var miembros = DB.miembros.filter(function(m) { return m.club === USUARIO.club && (m.rol === 'Participante' || !m.rol); });
+        var items = '';
+        var hoy = new Date().toISOString().split('T')[0];
+        for (var i = 0; i < miembros.length; i++) {
+            var m = miembros[i];
+            items += '<div class="asistencia-item"><div><strong>' + m.nombre + '</strong><br><small style="color:var(--text-muted);">' + m.id + ' · ' + (m.grado || '—') + '</small></div>' +
+                '<div class="radio-group">' +
+                '<input type="radio" name="asist_' + i + '" id="p_' + i + '" value="Presente" checked><label for="p_' + i + '" class="presente">✓ Presente</label>' +
+                '<input type="radio" name="asist_' + i + '" id="e_' + i + '" value="Excusa"><label for="e_' + i + '" class="excusa">📝 Excusa</label>' +
+                '<input type="radio" name="asist_' + i + '" id="a_' + i + '" value="Ausente"><label for="a_' + i + '" class="ausente">✗ Ausente</label>' +
+                '</div></div>';
+        }
+        return '<div class="card"><h3>✅ Pasar Lista - ' + USUARIO.club + '</h3>' +
+            '<div class="grid-2" style="margin-bottom:16px;">' +
+            '<div class="form-group"><label>Módulo/Tema de hoy</label><input id="asist-modulo" class="form-control" placeholder="Ej: Liderazgo y Comunicación"></div>' +
+            '<div class="form-group"><label>Fecha</label><input id="asist-fecha" class="form-control" type="date" value="' + hoy + '"></div></div>' +
+            '<div id="lista-asistencia">' + items + '</div>' +
+            '<button class="btn btn-success" onclick="guardarAsistencia()" style="margin-top:16px;">💾 Guardar Asistencia</button></div>';
+    } else {
+        var misAsist = DB.asistencias.filter(function(a) { return a.miembroId === USUARIO.id; });
+        var total = misAsist.length;
+        var presentes = misAsist.filter(function(a) { return a.estado === 'Presente'; }).length;
+        var excusas = misAsist.filter(function(a) { return a.estado === 'Excusa'; }).length;
+        var ausentes = misAsist.filter(function(a) { return a.estado === 'Ausente'; }).length;
+        var pct = total ? Math.round((presentes / total) * 100) : 0;
+        var filas = '';
+        for (var i = misAsist.length - 1; i >= 0; i--) {
+            var a = misAsist[i];
+            var estadoBadge = a.estado === 'Presente' ? 'badge-success' : a.estado === 'Excusa' ? 'badge-info' : 'badge-danger';
+            filas += '<tr><td>' + new Date(a.fecha).toLocaleDateString() + '</td><td>' + (a.modulo || '—') + '</td><td><span class="badge ' + estadoBadge + '">' + a.estado + '</span></td></tr>';
+        }
+        return '<div class="grid-3" style="margin-bottom:24px;">' +
+            '<div class="stat-card" style="border-left-color:var(--success);"><div class="label">Asistencia</div><div class="value">' + pct + '%</div><div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%;background:var(--success);"></div></div><div class="sub">' + presentes + ' de ' + total + ' clases</div></div>' +
+            '<div class="stat-card" style="border-left-color:var(--info);"><div class="label">Excusas</div><div class="value">' + excusas + '</div></div>' +
+            '<div class="stat-card" style="border-left-color:var(--danger);"><div class="label">Ausencias</div><div class="value">' + ausentes + '</div></div></div>' +
+            '<div class="card"><h3>📝 Historial de Asistencia</h3><div class="table-wrap"><table class="web-table"><thead><tr><th>Fecha</th><th>Módulo</th><th>Estado</th></tr></thead><tbody>' +
+            (filas || '<tr><td class="empty" colspan="3">Sin registros de asistencia</td></tr>') + '</tbody></table></div></div>';
+    }
+}
+
 function guardarAsistencia() {
     var modulo = document.getElementById('asist-modulo').value.trim();
     var fecha = document.getElementById('asist-fecha').value;
-    if (!modulo) { toast('Ingresa el módulo', 'error'); return; }
-    var miembros = MIEMBROS_DB.filter(function(m){ return m.club===USUARIO.club && m.rol==='Participante'; });
-    var nuevos = [];
+    if (!modulo) { toast('❌ Ingresa el módulo o tema de la clase', 'error'); return; }
+    var miembros = DB.miembros.filter(function(m) { return m.club === USUARIO.club && (m.rol === 'Participante' || !m.rol); });
+    var count = 0;
     for (var i = 0; i < miembros.length; i++) {
-        var estado = document.querySelector('input[name="asist_'+i+'"]:checked')?.value||'Presente';
-        var a = { id: Date.now()+i, miembroId: miembros[i].id, fecha: fecha, modulo: modulo, estado: estado, registradoPor: USUARIO.nombre };
-        ASISTENCIAS_DB.push(a); nuevos.push(a);
+        var estado = document.querySelector('input[name="asist_' + i + '"]:checked')?.value || 'Presente';
+        DB.asistencias.push({
+            id: Date.now() + i, miembroId: miembros[i].id, club: USUARIO.club,
+            fecha: fecha, modulo: modulo, estado: estado,
+            registradoPor: USUARIO.nombre, fechaRegistro: new Date().toISOString()
+        });
+        count++;
     }
-    localStorage.setItem('CLED_ASISTENCIAS', JSON.stringify(ASISTENCIAS_DB));
-    toast('✅ Asistencia guardada', 'success');
-    if (typeof API !== 'undefined') API.guardarAsistencia(nuevos.map(function(a){ return { miembroId: a.miembroId, clubId: USUARIO.clubId, fecha: a.fecha, modulo: a.modulo, estado: a.estado, registradoPor: USUARIO.id }; })).catch(function(){});
+    guardarDB('asistencias');
+    toast('✅ Asistencia guardada correctamente (' + count + ' registros)', 'success');
+    // Limpiar
+    document.getElementById('asist-modulo').value = '';
 }
 
 function renderInicioPanel() {
-    var mis = ASISTENCIAS_DB.filter(function(a){ return a.miembroId===USUARIO.id; });
-    var total = mis.length, presentes = mis.filter(function(a){ return a.estado==='Presente'; }).length;
-    var pct = total ? Math.round((presentes/total)*100) : 0;
-    var notas = CALIFICACIONES_DB.filter(function(c){ return c.miembroId===USUARIO.id; });
-    var prom = notas.length ? Math.round(notas.reduce(function(s,n){ return s+n.nota; },0)/notas.length) : 0;
-    return '<h2>¡Bienvenido, '+USUARIO.nombre.split(' ')[0]+'! 👋</h2><p>Club: <strong>'+USUARIO.club+'</strong></p><div class="grid-3" style="margin-top:24px;"><div class="stat-card"><div class="label">Asistencia</div><div class="value">'+pct+'%</div></div><div class="stat-card" style="border-left-color:var(--accent);"><div class="label">Promedio</div><div class="value">'+(prom||'—')+'</div></div><div class="stat-card" style="border-left-color:var(--success);"><div class="label">Club</div><div class="value" style="font-size:1.2rem;">'+USUARIO.club+'</div></div></div>';
+    var misAsist = DB.asistencias.filter(function(a) { return a.miembroId === USUARIO.id; });
+    var total = misAsist.length;
+    var presentes = misAsist.filter(function(a) { return a.estado === 'Presente'; }).length;
+    var pct = total ? Math.round((presentes / total) * 100) : 0;
+    var misCalifs = DB.calificaciones.filter(function(c) { return c.miembroId === USUARIO.id; });
+    var prom = misCalifs.length ? Math.round(misCalifs.reduce(function(s, c) { return s + c.nota; }, 0) / misCalifs.length) : 0;
+    return '<h2>¡Bienvenido, ' + USUARIO.nombre.split(' ')[0] + '! 👋</h2>' +
+        '<p style="color:var(--text-muted);margin-bottom:24px;">Club: <strong>' + USUARIO.club + '</strong> · Estado: <strong>' + USUARIO.estado + '</strong></p>' +
+        '<div class="grid-3" style="margin-bottom:24px;">' +
+        '<div class="stat-card"><div class="label">Mi Asistencia</div><div class="value">' + pct + '%</div><div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%;"></div></div></div>' +
+        '<div class="stat-card" style="border-left-color:var(--accent);"><div class="label">Mi Promedio</div><div class="value">' + (prom || '—') + '</div></div>' +
+        '<div class="stat-card" style="border-left-color:var(--success);"><div class="label">Mi Club</div><div class="value" style="font-size:1.2rem;">' + USUARIO.club + '</div></div></div>' +
+        '<div class="card"><h3>📢 Últimos Anuncios</h3>' +
+        (DB.anuncios.slice(-3).reverse().map(function(a) { return '<div class="anuncio-card"><h4>' + a.titulo + '</h4><div class="meta">' + a.autor + ' · ' + new Date(a.fecha).toLocaleDateString() + '</div><p>' + a.contenido + '</p></div>'; }).join('') || '<p style="color:var(--text-muted);">No hay anuncios recientes</p>') + '</div>';
 }
 
-// ═══════════════════ PROTOCOLO ═══════════════════
+// ═══════════════ PROTOCOLO ═══════════════
 function verificarCodigoProtocolo() {
     var codigo = document.getElementById('codigo-input').value.trim();
     if (!codigo) { toast('Ingresa un código', 'error'); return; }
-    var confs = JSON.parse(localStorage.getItem('CLED_CONFIRMACIONES') || '[]');
     var encontrada = null;
-    for (var i = 0; i < confs.length; i++) { if (confs[i].codigo===codigo && !confs[i].checkin) { encontrada = confs[i]; confs[i].checkin = true; confs[i].horaCheckin = new Date().toISOString(); break; } }
+    for (var i = 0; i < DB.confirmaciones.length; i++) {
+        if (DB.confirmaciones[i].codigo === codigo && !DB.confirmaciones[i].checkin) {
+            encontrada = DB.confirmaciones[i];
+            DB.confirmaciones[i].checkin = true;
+            DB.confirmaciones[i].horaCheckin = new Date().toISOString();
+            DB.confirmaciones[i].verificadoPor = USUARIO.nombre;
+            break;
+        }
+    }
     var resDiv = document.getElementById('resultado-verificacion');
     if (encontrada) {
-        localStorage.setItem('CLED_CONFIRMACIONES', JSON.stringify(confs));
-        resDiv.innerHTML = '<div class="resultado-card success"><div class="resultado-header"><div class="icono-status icono-success">✓</div><h3>✅ Confirmado</h3></div><div class="datos-grid"><div class="dato-item"><strong>Nombre</strong><span>'+encontrada.nombre+'</span></div><div class="dato-item"><strong>Email</strong><span>'+encontrada.email+'</span></div><div class="dato-item"><strong>Tel</strong><span>'+encontrada.telefono+'</span></div><div class="dato-item"><strong>Curso</strong><span>'+encontrada.curso+'</span></div></div></div>';
-        toast('✅ Check-in exitoso', 'success'); document.getElementById('codigo-input').value = ''; actualizarEstadisticasProtocolo();
-        if (typeof API !== 'undefined') API.verificarCodigoEvento(codigo, USUARIO.id).catch(function(){});
+        guardarDB('confirmaciones');
+        resDiv.innerHTML = '<div class="resultado-card success"><h3>✅ Asistencia Confirmada</h3>' +
+            '<div class="datos-grid"><div class="dato-item"><strong>Nombre</strong><span>' + encontrada.nombre + '</span></div>' +
+            '<div class="dato-item"><strong>Email</strong><span>' + encontrada.email + '</span></div>' +
+            '<div class="dato-item"><strong>Teléfono</strong><span>' + encontrada.telefono + '</span></div>' +
+            '<div class="dato-item"><strong>Curso</strong><span>' + encontrada.curso + '</span></div></div>' +
+            '<p style="margin-top:8px;"><strong>Hora de check-in:</strong> ' + new Date().toLocaleTimeString() + '</p></div>';
+        toast('✅ Check-in exitoso', 'success');
+        document.getElementById('codigo-input').value = '';
+        actualizarEstadisticasProtocolo();
     } else {
-        resDiv.innerHTML = '<div class="resultado-card error"><h3>❌ No válido</h3><p>Verifica el código.</p></div>'; toast('Código no encontrado', 'error');
+        resDiv.innerHTML = '<div class="resultado-card error"><h3>❌ Código no válido</h3><p>Verifica el código e intenta de nuevo.</p></div>';
+        toast('❌ Código no encontrado o ya utilizado', 'error');
     }
 }
+
 function actualizarEstadisticasProtocolo() {
-    var confs = JSON.parse(localStorage.getItem('CLED_CONFIRMACIONES') || '[]');
-    var presentes = confs.filter(function(c){ return c.checkin; }).length;
+    var confs = DB.confirmaciones;
+    var presentes = confs.filter(function(c) { return c.checkin; }).length;
     document.getElementById('stat-confirmados').textContent = confs.length;
     document.getElementById('stat-presentes').textContent = presentes;
     document.getElementById('stat-ausentes').textContent = confs.length - presentes;
 }
 
-// ═══════════════════ TUTORIAL ═══════════════════
-function mostrarTutorial() { document.getElementById('tutorial-overlay').classList.remove('hidden'); mostrarPaso(0); }
-function mostrarPaso(paso) {
-    PASO_TUTORIAL = paso;
-    var pasos = [{t:'¡Bienvenido! 👋',c:'Te guiaremos por las funciones principales.'},{t:'Panel de Navegación',c:'Usa el menú lateral.'},{t:'Tu Perfil',c:'Aquí ves tu información.'},{t:'Términos',c:'Acepta para continuar.'}];
-    var tc = document.getElementById('tutorial-content');
-    if (paso < 3) { tc.innerHTML = '<span class="tutorial-step">Paso '+(paso+1)+'/4</span><h2>'+pasos[paso].t+'</h2><p>'+pasos[paso].c+'</p><div class="tutorial-actions">'+(paso>0?'<button class="btn btn-ghost" onclick="mostrarPaso('+(paso-1)+')">←</button>':'')+'<button class="btn btn-primary" onclick="mostrarPaso('+(paso+1)+')">→</button></div>'; }
-    else { tc.innerHTML = '<h2>Términos</h2><div class="terminos-contenido"><p>Al utilizar CLED aceptas las normativas.</p></div><div class="checkbox-terminos"><input type="checkbox" id="acepto-terminos" onchange="document.getElementById(\'btn-finalizar\').disabled=!this.checked"><label>Acepto</label></div><button class="btn btn-success" id="btn-finalizar" disabled onclick="finalizarTutorial()">Comenzar</button>'; }
-}
-function finalizarTutorial() { document.getElementById('tutorial-overlay').classList.add('hidden'); USUARIO.tutorialVisto=true; USUARIO.terminosAceptados=true; localStorage.setItem('CLED_SESSION', JSON.stringify(USUARIO)); toast('🎉 ¡Bienvenido!', 'success'); if (typeof API !== 'undefined') { API.updateTutorialVisto(USUARIO.id).catch(function(){}); API.aceptarTerminos(USUARIO.id).catch(function(){}); } }
-
-// ═══════════════════ UTILIDADES ═══════════════════
+// ═══════════════ UTILIDADES ═══════════════
 function cerrarModal(id) { document.getElementById(id).style.display = 'none'; document.body.style.overflow = 'auto'; }
-function toast(msg, type) { type = type || ''; var t = document.getElementById('toast'); t.textContent = msg; t.className = 'show ' + type; setTimeout(function(){ t.className = ''; }, 3000); }
-function filtrarTabla(valor, tablaId) { var f = valor.toUpperCase(); var filas = document.getElementById(tablaId)?.getElementsByTagName('tr') || []; for (var i = 1; i < filas.length; i++) { filas[i].style.display = filas[i].textContent.toUpperCase().indexOf(f) > -1 ? '' : 'none'; } }
+function toast(msg, type) {
+    type = type || '';
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'show ' + type;
+    setTimeout(function() { t.className = ''; }, 3000);
+}
+function filtrarTabla(valor, tablaId) {
+    var f = valor.toUpperCase();
+    var filas = document.getElementById(tablaId)?.getElementsByTagName('tr') || [];
+    for (var i = 1; i < filas.length; i++) { filas[i].style.display = filas[i].textContent.toUpperCase().indexOf(f) > -1 ? '' : 'none'; }
+}
 
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { cerrarModal('modal-director'); cerrarModal('modal-evento'); cerrarModal('modal-codigo'); } });
-document.addEventListener('click', function(e) { if (e.target.id === 'modal-director') cerrarModal('modal-director'); if (e.target.id === 'modal-evento') cerrarModal('modal-evento'); if (e.target.id === 'modal-codigo') cerrarModal('modal-codigo'); });
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { cerrarModal('modal-director'); cerrarModal('modal-evento'); cerrarModal('modal-codigo'); }
+});
+document.addEventListener('click', function(e) {
+    if (e.target.id === 'modal-director') cerrarModal('modal-director');
+    if (e.target.id === 'modal-evento') cerrarModal('modal-evento');
+    if (e.target.id === 'modal-codigo') cerrarModal('modal-codigo');
+});
 document.addEventListener('submit', function(e) { e.preventDefault(); return false; });
 </script>
 </body>
