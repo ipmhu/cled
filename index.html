@@ -259,9 +259,9 @@ function guardarDB(clave) {
 }
 
 var DIRECTIVA_DATA = [
-    { id:1, nombre:'Robelin Mejías', cargo:'Director General', foto:'Robelin.png', historia:'Robelin Mejías es un visionario del desarrollo estudiantil que transformó el CLED en una plataforma integral de liderazgo. Con más de 3 años de experiencia en gestión de proyectos educativos, ha liderado la digitalización completa de los procesos institucionales y la expansión del club a nivel distrital. Su enfoque innovador combina tecnología, comunicación y liderazgo para crear experiencias transformadoras en toda la comunidad educativa.', logros:['Fundador del Club de Comunicación Social y Periodismo (2025)','Digitalización completa de procesos institucionales','Reconocimiento del Distrito Educativo 15-01 (2025)','Liderazgo en la expansión a 5 clubes activos','Implementación del sistema de gestión integral CLED'], formacion:'Desarrollo y Administración de Aplicaciones Informáticas', email:'robelin@cled.edu.do' },
-    { id:2, nombre:'Jennyfer López', cargo:'Directora General', foto:'Jennyfer.png', historia:'Jennyfer López lidera la excelencia académica del CLED con una sólida formación en gestión educativa. Ha diseñado el currículo de liderazgo que hoy impacta a más de 200 estudiantes, implementando sistemas de evaluación continua y metodologías innovadoras de enseñanza. Su pasión por la educación se refleja en cada programa y actividad del club, asegurando estándares de calidad en todos los procesos formativos.', logros:['Diseño del currículo de liderazgo integral','Implementación del sistema de evaluación continua','Desarrollo de programas de mentoría estudiantil','Coordinación de +30 talleres formativos'], formacion:'Gestión Administrativa y Tributaria', email:'jennyfer@cled.edu.do' },
-    { id:3, nombre:'Shiley Aracena', cargo:'Directora General', foto:'Shiley.png', historia:'Shiley Aracena coordina la logística y operaciones del CLED con precisión y eficiencia. Su experiencia en gestión de proyectos y logística ha permitido que cada evento, taller y actividad del club se ejecute de manera impecable. Ha coordinado más de 50 eventos exitosos, estableciendo estándares de calidad operativa que garantizan el buen funcionamiento de todas las iniciativas del club.', logros:['Optimización de procesos operativos institucionales','Coordinación de +50 eventos exitosos','Implementación de sistemas de gestión de recursos','Estandarización de protocolos de eventos'], formacion:'Logística y Transporte', email:'shiley@cled.edu.do' }
+    { id:1, nombre:'Robelin Mejías', cargo:'Director General', foto:'CLEDWEB/Robelin.png', historia:'Robelin Mejías es un visionario del desarrollo estudiantil que transformó el CLED en una plataforma integral de liderazgo. Con más de 3 años de experiencia en gestión de proyectos educativos, ha liderado la digitalización completa de los procesos institucionales y la expansión del club a nivel distrital. Su enfoque innovador combina tecnología, comunicación y liderazgo para crear experiencias transformadoras en toda la comunidad educativa.', logros:['Fundador del Club de Comunicación Social y Periodismo (2025)','Digitalización completa de procesos institucionales','Reconocimiento del Distrito Educativo 15-01 (2025)','Liderazgo en la expansión a 5 clubes activos','Implementación del sistema de gestión integral CLED'], formacion:'Desarrollo y Administración de Aplicaciones Informáticas', email:'robelin@cled.edu.do' },
+    { id:2, nombre:'Jennyfer López', cargo:'Directora General', foto:'CLEDWEB/Jennyfer.png', historia:'Jennyfer López lidera la excelencia académica del CLED con una sólida formación en gestión educativa. Ha diseñado el currículo de liderazgo que hoy impacta a más de 200 estudiantes, implementando sistemas de evaluación continua y metodologías innovadoras de enseñanza. Su pasión por la educación se refleja en cada programa y actividad del club, asegurando estándares de calidad en todos los procesos formativos.', logros:['Diseño del currículo de liderazgo integral','Implementación del sistema de evaluación continua','Desarrollo de programas de mentoría estudiantil','Coordinación de +30 talleres formativos'], formacion:'Gestión Administrativa y Tributaria', email:'jennyfer@cled.edu.do' },
+    { id:3, nombre:'Shiley Aracena', cargo:'Directora General', foto:'CLEDWEB/Shiley.png', historia:'Shiley Aracena coordina la logística y operaciones del CLED con precisión y eficiencia. Su experiencia en gestión de proyectos y logística ha permitido que cada evento, taller y actividad del club se ejecute de manera impecable. Ha coordinado más de 50 eventos exitosos, estableciendo estándares de calidad operativa que garantizan el buen funcionamiento de todas las iniciativas del club.', logros:['Optimización de procesos operativos institucionales','Coordinación de +50 eventos exitosos','Implementación de sistemas de gestión de recursos','Estandarización de protocolos de eventos'], formacion:'Logística y Transporte', email:'shiley@cled.edu.do' }
 ];
 
 // ═══════════════════════════ INICIALIZACIÓN ═══════════════════════════
@@ -616,16 +616,21 @@ function renderizarSidebar() {
             '<button class="nav-btn" onclick="cargarVistaPanel(\'anuncios\',this)">📢 Anuncios</button>' +
             '<button class="nav-btn" onclick="cargarVistaPanel(\'reuniones\',this)">📅 Reuniones</button>' +
             '<button class="nav-btn" onclick="cargarVistaPanel(\'inscripciones\',this)">📋 Inscripciones</button>';
-    } else {
-        h = '<div class="nav-section-label">MI ESPACIO</div>' +
-            '<button class="nav-btn active" onclick="cargarVistaPanel(\'inicio\',this)">🏠 Inicio</button>' +
-            '<button class="nav-btn" onclick="cargarVistaPanel(\'anuncios\',this)">📢 Anuncios</button>' +
-            '<div class="nav-section-label">ACADÉMICO</div>' +
-            '<button class="nav-btn" onclick="cargarVistaPanel(\'calificaciones\',this)">📊 Mis Calificaciones</button>' +
-            '<button class="nav-btn" onclick="cargarVistaPanel(\'asistencia\',this)">📝 Mi Asistencia</button>';
-    }
+} else {
+    h = '<div class="nav-section-label">MI ESPACIO</div>' +
+        '<button class="nav-btn active" onclick="cargarVistaPanel(\'inicio\',this)">🏠 Inicio</button>' +
+        '<button class="nav-btn" onclick="cargarVistaPanel(\'anuncios\',this)">📢 Anuncios</button>' +
+        '<button class="nav-btn" onclick="cargarVistaPanel(\'tareas\',this)">📋 Mis Tareas</button>' +
+        '<button class="nav-btn" onclick="cargarVistaPanel(\'reuniones\',this)">📅 Reuniones</button>' +
+        '<div class="nav-section-label">ACADÉMICO</div>' +
+        '<button class="nav-btn" onclick="cargarVistaPanel(\'calificaciones\',this)">📊 Mis Calificaciones</button>' +
+        '<button class="nav-btn" onclick="cargarVistaPanel(\'asistencia\',this)">📝 Mi Asistencia</button>' +
+        '<div class="nav-section-label">RECURSOS</div>' +
+        '<button class="nav-btn" onclick="cargarVistaPanel(\'recursos\',this)">📚 Biblioteca CLED</button>';
+}
     nav.innerHTML = h;
 }
+
 
 // ═══════════════════════════ PANEL - CARGAR VISTAS ═══════════════════════════
 function cargarVistaPanel(vista, btnEl) {
@@ -635,6 +640,7 @@ function cargarVistaPanel(vista, btnEl) {
     var area = document.getElementById('content-area');
 
     switch (vista) {
+        case 'tareas_fac': area.innerHTML = renderTareasFacilitador(); break;
         case 'dashboard': area.innerHTML = renderDashboard(); break;
         case 'miembros': area.innerHTML = renderMiembros(); break;
         case 'inscripciones': area.innerHTML = renderInscripcionesPanel(); break;
@@ -644,6 +650,10 @@ function cargarVistaPanel(vista, btnEl) {
         case 'calificaciones': area.innerHTML = renderCalificaciones(); break;
         case 'asistencia': area.innerHTML = renderAsistencia(); break;
         case 'inicio': area.innerHTML = renderInicioPanel(); break;
+        case 'tareas': area.innerHTML = renderTareas(); break;
+case 'recursos': area.innerHTML = renderRecursos(); break;
+// Para reuniones, el participante ve las reuniones de su club
+case 'reuniones': area.innerHTML = renderReunionesParticipante(); break;
     }
 }
 
@@ -1355,6 +1365,299 @@ function renderInicioPanel() {
         '<div class="stat-card" style="border-left-color:var(--success);"><div class="label">Mi Club</div><div class="value" style="font-size:1.2rem;">' + USUARIO.club + '</div></div></div>' +
         '<div class="card"><h3>📢 Últimos Anuncios</h3>' +
         (DB.anuncios.slice(-3).reverse().map(function(a) { return '<div class="anuncio-card"><h4>' + a.titulo + '</h4><div class="meta">' + a.autor + ' · ' + new Date(a.fecha).toLocaleDateString() + '</div><p>' + a.contenido + '</p></div>'; }).join('') || '<p style="color:var(--text-muted);">No hay anuncios recientes</p>') + '</div>';
+}
+
+// ═══════════════ TAREAS DEL ESTUDIANTE ═══════════════
+function renderTareas() {
+    // Obtener tareas publicadas por facilitadores
+    var tareas = JSON.parse(localStorage.getItem('CLED_TAREAS') || '[]');
+    // Filtrar tareas del club del estudiante
+    var misTareas = tareas.filter(function(t) { return t.club === USUARIO.club || t.club === 'TODOS'; });
+    
+    var tareasPendientes = misTareas.filter(function(t) { return t.estado === 'pendiente'; });
+    var tareasCompletadas = misTareas.filter(function(t) { return t.estado === 'completada'; });
+    
+    var html = '<h2>📋 Mis Tareas - ' + USUARIO.club + '</h2>';
+    
+    // Tareas pendientes
+    html += '<div class="card"><h3>⏳ Tareas Pendientes (' + tareasPendientes.length + ')</h3>';
+    if (tareasPendientes.length === 0) {
+        html += '<p style="color:var(--text-muted);">No tienes tareas pendientes. ¡Buen trabajo!</p>';
+    } else {
+        for (var i = 0; i < tareasPendientes.length; i++) {
+            var t = tareasPendientes[i];
+            html += '<div class="anuncio-card" style="border-left-color: var(--warning);">' +
+                '<div style="display:flex;justify-content:space-between;align-items:start;">' +
+                '<div><h4>' + t.titulo + '</h4>' +
+                '<div class="meta">📅 Entrega: ' + new Date(t.fechaEntrega).toLocaleDateString() + ' · 🕐 ' + (t.horaEntrega || '23:59') + ' · Publicado por: ' + (t.publicadoPor || 'Facilitador') + '</div>' +
+                '<p style="margin:8px 0;">' + (t.descripcion || 'Sin descripción') + '</p>' +
+                (t.link ? '<a href="' + t.link + '" target="_blank" class="btn btn-sm btn-info">🔗 Enlace de la tarea</a>' : '') + '</div>' +
+                '<div style="text-align:right;">' +
+                '<span class="badge badge-warning">Pendiente</span>' +
+                '<br><button class="btn btn-sm btn-success" style="margin-top:8px;" onclick="marcarTareaCompletada(\'' + t.id + '\')">✓ Marcar como completada</button></div></div></div>';
+        }
+    }
+    html += '</div>';
+    
+    // Tareas completadas
+    html += '<div class="card"><h3>✅ Tareas Completadas (' + tareasCompletadas.length + ')</h3>';
+    if (tareasCompletadas.length === 0) {
+        html += '<p style="color:var(--text-muted);">No has completado tareas aún.</p>';
+    } else {
+        for (var i = 0; i < tareasCompletadas.length; i++) {
+            var t = tareasCompletadas[i];
+            html += '<div class="anuncio-card" style="border-left-color: var(--success); opacity:0.8;">' +
+                '<h4>✅ ' + t.titulo + '</h4>' +
+                '<div class="meta">📅 Entregada: ' + new Date(t.fechaEntrega).toLocaleDateString() + ' · Completada el: ' + new Date(t.fechaCompletada).toLocaleDateString() + '</div>' +
+                '<p style="margin:8px 0;">' + (t.descripcion || 'Sin descripción') + '</p></div>';
+        }
+    }
+    html += '</div>';
+    
+    return html;
+}
+
+function marcarTareaCompletada(id) {
+    var tareas = JSON.parse(localStorage.getItem('CLED_TAREAS') || '[]');
+    for (var i = 0; i < tareas.length; i++) {
+        if (tareas[i].id === id) {
+            tareas[i].estado = 'completada';
+            tareas[i].fechaCompletada = new Date().toISOString();
+            tareas[i].completadaPor = USUARIO.nombre;
+            break;
+        }
+    }
+    localStorage.setItem('CLED_TAREAS', JSON.stringify(tareas));
+    toast('✅ Tarea marcada como completada', 'success');
+    cargarVistaPanel('tareas');
+}
+
+// ═══════════════ RECURSOS / BIBLIOTECA CLED ═══════════════
+function renderRecursos() {
+    var recursos = [
+        {
+            titulo: '📜 Constitución CLED',
+            descripcion: 'Documento oficial que establece la estructura, principios y normas fundamentales del Club de Liderazgo, Expresión y Desarrollo.',
+            tipo: 'documento',
+            icono: '📜',
+            color: '#0F2A44',
+            secciones: [
+                { titulo: 'Capítulo I: Disposiciones Generales', contenido: 'El CLED es una organización estudiantil dedicada al fomento del liderazgo, la expresión y el desarrollo integral de sus miembros.' },
+                { titulo: 'Capítulo II: De la Estructura Organizativa', contenido: 'El CLED se estructura en: Director General, Directores de Área, Facilitadores, Líderes de Club y Miembros Participantes.' },
+                { titulo: 'Capítulo III: De los Clubes', contenido: 'Los clubes son las unidades fundamentales del CLED. Cada club tiene autonomía para organizar sus actividades dentro del marco establecido.' },
+                { titulo: 'Capítulo IV: De las Reuniones', contenido: 'Se realizarán reuniones periódicas para planificar, evaluar y coordinar las actividades del club.' }
+            ]
+        },
+        {
+            titulo: '⚖️ Deberes y Derechos de los Miembros',
+            descripcion: 'Conoce tus derechos y responsabilidades como miembro activo del CLED.',
+            tipo: 'documento',
+            icono: '⚖️',
+            color: '#1F4E79',
+            secciones: [
+                { titulo: 'Derechos', contenido: '1. Participar en todas las actividades del club.\n2. Recibir formación y capacitación.\n3. Expresar libremente sus ideas.\n4. Ser evaluado de manera justa.\n5. Acceder a los recursos del club.' },
+                { titulo: 'Deberes', contenido: '1. Asistir puntualmente a las reuniones.\n2. Respetar a todos los miembros.\n3. Cumplir con las tareas asignadas.\n4. Cuidar los recursos del club.\n5. Representar dignamente al CLED.' }
+            ]
+        },
+        {
+            titulo: '📖 Manual del Líder CLED',
+            descripcion: 'Guía completa de competencias y metodología para líderes de club.',
+            tipo: 'documento',
+            icono: '📖',
+            color: '#7E57C2',
+            secciones: [
+                { titulo: 'Competencias del Líder', contenido: 'Comunicación efectiva, trabajo en equipo, resolución de conflictos, planificación estratégica y motivación.' },
+                { titulo: 'Metodología', contenido: 'Aprendizaje basado en proyectos, mentoría entre pares, evaluación continua y retroalimentación constructiva.' }
+            ]
+        },
+        {
+            titulo: '📋 Normativas y Reglas',
+            descripcion: 'Reglamento interno que establece las normas de convivencia y participación.',
+            tipo: 'documento',
+            icono: '📋',
+            color: '#F57C00',
+            secciones: [
+                { titulo: 'Normas de Convivencia', contenido: '1. Respeto mutuo.\n2. Puntualidad.\n3. Participación activa.\n4. Uso responsable de redes sociales.\n5. Confidencialidad de la información interna.' },
+                { titulo: 'Régimen Disciplinario', contenido: 'Las faltas se clasifican en leves, graves y muy graves. Las sanciones pueden incluir amonestación verbal, suspensión temporal o expulsión del club.' }
+            ]
+        },
+        {
+            titulo: '🎓 Programa de Formación',
+            descripcion: 'Plan de estudios y ruta de aprendizaje para el desarrollo de competencias.',
+            tipo: 'documento',
+            icono: '🎓',
+            color: '#4CAF50',
+            secciones: [
+                { titulo: 'Módulo 1: Liderazgo Personal', contenido: 'Autoconocimiento, inteligencia emocional y gestión del tiempo.' },
+                { titulo: 'Módulo 2: Comunicación', contenido: 'Oratoria, debate y comunicación asertiva.' },
+                { titulo: 'Módulo 3: Trabajo en Equipo', contenido: 'Colaboración, delegación y resolución de conflictos.' },
+                { titulo: 'Módulo 4: Proyectos', contenido: 'Planificación, ejecución y evaluación de proyectos.' }
+            ]
+        },
+        {
+            titulo: '📅 Calendario Institucional',
+            descripcion: 'Fechas importantes, eventos y actividades programadas para el ciclo actual.',
+            tipo: 'calendario',
+            icono: '📅',
+            color: '#E53935',
+            secciones: [
+                { titulo: 'Próximos Eventos', contenido: '• Taller de Liderazgo - 15 de Junio\n• Competencia de Debate - 22 de Junio\n• Exposición de Arte - 5 de Julio\n• Cierre de Ciclo - 15 de Diciembre' }
+            ]
+        }
+    ];
+    
+    var html = '<h2>📚 Biblioteca CLED</h2><p style="color:var(--text-muted);margin-bottom:20px;">Accede a todos los recursos y documentos oficiales del club.</p>';
+    
+    html += '<div class="grid-2">';
+    for (var i = 0; i < recursos.length; i++) {
+        var r = recursos[i];
+        html += '<div class="card" style="cursor:pointer;border-top:4px solid ' + r.color + ';" onclick="abrirRecurso(\'' + i + '\')">' +
+            '<div style="font-size:2.5rem;margin-bottom:8px;">' + r.icono + '</div>' +
+            '<h3>' + r.titulo + '</h3>' +
+            '<p style="color:#5f6a79;font-size:0.9rem;">' + r.descripcion + '</p>' +
+            '<button class="btn btn-sm btn-primary" style="margin-top:8px;">📖 Leer documento</button></div>';
+    }
+    html += '</div>';
+    
+    // Guardar recursos en variable global para el modal
+    window._recursosCLED = recursos;
+    
+    return html;
+}
+
+function abrirRecurso(index) {
+    var recursos = window._recursosCLED || [];
+    var r = recursos[parseInt(index)];
+    if (!r) return;
+    
+    // Crear modal para mostrar el recurso
+    var overlay = document.createElement('div');
+    overlay.className = 'floating-card-overlay';
+    overlay.id = 'modal-recurso';
+    
+    var seccionesHTML = '';
+    for (var i = 0; i < r.secciones.length; i++) {
+        var s = r.secciones[i];
+        seccionesHTML += '<div style="margin-bottom:16px;">' +
+            '<h4 style="color:var(--primary);margin-bottom:4px;">' + s.titulo + '</h4>' +
+            '<p style="white-space:pre-line;line-height:1.8;color:#333;">' + s.contenido + '</p></div>';
+    }
+    
+    overlay.innerHTML = '<div class="floating-card" style="max-width:700px;text-align:left;max-height:80vh;overflow-y:auto;">' +
+        '<div style="font-size:2.5rem;margin-bottom:8px;">' + r.icono + '</div>' +
+        '<h2 style="color:var(--primary);margin-bottom:4px;">' + r.titulo + '</h2>' +
+        '<p style="color:var(--text-muted);margin-bottom:20px;">' + r.descripcion + '</p>' +
+        '<div style="border-top:2px solid ' + r.color + ';padding-top:16px;">' + seccionesHTML + '</div>' +
+        '<button class="btn btn-primary btn-wide" style="margin-top:16px;" onclick="document.getElementById(\'modal-recurso\').remove()">Cerrar</button></div>';
+    
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+}
+
+// ═══════════════ REUNIONES PARA PARTICIPANTE ═══════════════
+function renderReunionesParticipante() {
+    var reuniones = DB.reuniones;
+    // Filtrar reuniones del club del estudiante o globales
+    var misReuniones = reuniones.filter(function(r) {
+        return r.club === USUARIO.club || r.global === true || r.club === 'TODOS';
+    });
+    
+    var proximasHTML = '';
+    var pasadasHTML = '';
+    var hoy = new Date().toISOString().split('T')[0];
+    
+    for (var i = 0; i < misReuniones.length; i++) {
+        var r = misReuniones[i];
+        var tipoIcono = r.tipo === 'global' ? '🌍' : r.tipo === 'personal' ? '👤' : '🏷️';
+        var tipoTexto = r.tipo === 'global' ? 'Global (Todos los líderes)' : r.tipo === 'personal' ? 'Persona: ' + (r.personaNombre || 'Específica') : 'Club: ' + (r.club || '—');
+        var esPasada = r.fecha < hoy;
+        
+        var tarjeta = '<div class="anuncio-card" style="border-left-color:' + (esPasada ? 'var(--text-muted)' : 'var(--info)') + ';' + (esPasada ? 'opacity:0.7;' : '') + '">' +
+            '<h4>' + tipoIcono + ' ' + r.titulo + (esPasada ? ' (Finalizada)' : '') + '</h4>' +
+            '<div class="meta">📅 ' + r.fecha + ' · 🕐 ' + r.hora + ' · ' + tipoTexto + ' · Por: ' + (r.creador || '—') + '</div>' +
+            (r.objetivo ? '<p style="margin:8px 0;">🎯 <strong>Objetivo:</strong> ' + r.objetivo + '</p>' : '') +
+            (!esPasada ? '<a href="' + r.link + '" target="_blank" class="btn btn-sm btn-info" style="margin-top:8px;">🔗 Unirse a la reunión</a>' : '') +
+            '</div>';
+        
+        if (esPasada) {
+            pasadasHTML += tarjeta;
+        } else {
+            proximasHTML += tarjeta;
+        }
+    }
+    
+    return '<h2>📅 Reuniones</h2>' +
+        '<div class="card"><h3>🔴 Próximas Reuniones</h3>' +
+        (proximasHTML || '<p style="color:var(--text-muted);">No hay reuniones próximas para tu club.</p>') + '</div>' +
+        '<div class="card"><h3>✅ Reuniones Pasadas</h3>' +
+        (pasadasHTML || '<p style="color:var(--text-muted);">No hay reuniones pasadas registradas.</p>') + '</div>';
+}
+
+// ═══════════════ PUBLICAR TAREAS (FACILITADOR) ═══════════════
+// Agregar esta función para que los facilitadores puedan publicar tareas
+function renderTareasFacilitador() {
+    if (USUARIO.rol !== 'Facilitador') return '';
+    
+    var tareas = JSON.parse(localStorage.getItem('CLED_TAREAS') || '[]');
+    var misTareasPublicadas = tareas.filter(function(t) { return t.club === USUARIO.club; });
+    
+    var tareasHTML = '';
+    for (var i = 0; i < misTareasPublicadas.length; i++) {
+        var t = misTareasPublicadas[i];
+        var completadas = DB.miembros.filter(function(m) { return m.club === USUARIO.club; }).length;
+        tareasHTML += '<div class="anuncio-card" style="border-left-color: ' + (t.estado === 'pendiente' ? 'var(--warning)' : 'var(--success)') + ';">' +
+            '<h4>' + t.titulo + '</h4>' +
+            '<div class="meta">📅 Entrega: ' + new Date(t.fechaEntrega).toLocaleDateString() + ' · Estado: ' + t.estado + '</div>' +
+            '<p>' + (t.descripcion || 'Sin descripción') + '</p>' +
+            '<button class="btn btn-sm btn-danger" onclick="eliminarTarea(\'' + t.id + '\')">🗑️ Eliminar</button></div>';
+    }
+    
+    return '<div class="card"><h3>📝 Publicar Nueva Tarea</h3>' +
+        '<div class="form-group"><label>Título de la tarea</label><input id="tarea-titulo" class="form-control" placeholder="Ej: Investigación sobre liderazgo"></div>' +
+        '<div class="form-group"><label>Descripción</label><textarea id="tarea-descripcion" class="form-control" rows="3" placeholder="Instrucciones detalladas..."></textarea></div>' +
+        '<div class="grid-2">' +
+        '<div class="form-group"><label>Fecha de entrega</label><input id="tarea-fecha" class="form-control" type="date"></div>' +
+        '<div class="form-group"><label>Hora de entrega</label><input id="tarea-hora" class="form-control" type="time" value="23:59"></div></div>' +
+        '<div class="form-group"><label>Link (opcional)</label><input id="tarea-link" class="form-control" placeholder="https://..."></div>' +
+        '<button class="btn btn-primary" onclick="publicarTarea()">📝 Publicar Tarea</button></div>' +
+        '<div class="card"><h3>📋 Tareas Publicadas (' + misTareasPublicadas.length + ')</h3>' +
+        (tareasHTML || '<p style="color:var(--text-muted);">No has publicado tareas.</p>') + '</div>';
+}
+
+function publicarTarea() {
+    var titulo = document.getElementById('tarea-titulo').value.trim();
+    var descripcion = document.getElementById('tarea-descripcion').value.trim();
+    var fecha = document.getElementById('tarea-fecha').value;
+    var hora = document.getElementById('tarea-hora').value;
+    var link = document.getElementById('tarea-link').value.trim();
+    
+    if (!titulo || !fecha) { toast('❌ Completa título y fecha', 'error'); return; }
+    
+    var tareas = JSON.parse(localStorage.getItem('CLED_TAREAS') || '[]');
+    tareas.push({
+        id: Date.now().toString(),
+        titulo: titulo,
+        descripcion: descripcion,
+        fechaEntrega: fecha,
+        horaEntrega: hora,
+        link: link,
+        club: USUARIO.club,
+        estado: 'pendiente',
+        publicadoPor: USUARIO.nombre,
+        fechaPublicacion: new Date().toISOString()
+    });
+    localStorage.setItem('CLED_TAREAS', JSON.stringify(tareas));
+    toast('✅ Tarea publicada para ' + USUARIO.club, 'success');
+    cargarVistaPanel('tareas_fac');
+}
+
+function eliminarTarea(id) {
+    if (!confirm('¿Eliminar esta tarea?')) return;
+    var tareas = JSON.parse(localStorage.getItem('CLED_TAREAS') || '[]');
+    tareas = tareas.filter(function(t) { return t.id !== id; });
+    localStorage.setItem('CLED_TAREAS', JSON.stringify(tareas));
+    toast('🗑️ Tarea eliminada', 'success');
+    cargarVistaPanel('tareas_fac');
 }
 
 // ═══════════════ PROTOCOLO ═══════════════
